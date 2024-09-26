@@ -7,6 +7,9 @@ function setUIMode(mode) uiMode = mode end
 function getUIMode() return uiMode end
 
 function love.load()
+    if love.filesystem.isFused() then
+        love.filesystem.mount(love.filesystem.getSourceBaseDirectory(), 'SCFA')
+    end
     love.thread.newThread'utils/threads/update.lua':start()
 end
 

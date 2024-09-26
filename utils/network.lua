@@ -1,6 +1,7 @@
 local ftp = require'socket.ftp' --https://lunarmodules.github.io/luasocket/ftp.html
 local ltn12 = require'ltn12'
 local feedback = love.thread.getChannel'log'
+local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
 
 local network = {}
 
@@ -24,9 +25,9 @@ function network.ftpGetWrite(path)
     feedback:push{path, 'downloading'}
     local fileData = network.ftpGet(path)
     if fileData then
-        love.filesystem.createDirectory(folder)
+        love.filesystem.createDirectory(writePath..folder)
         feedback:push{path, 'writing'}
-        love.filesystem.write(path, fileData)
+        love.filesystem.write(writePath..path, fileData)
         feedback:push{path, 'done'}
     end
 end
