@@ -15,9 +15,9 @@ return {
         timer=timer+delta
         if not startDone and timer>0.1 then
             start = require'ui.menu'
-            if start.update then
+            --[[if start.update then
                 start.update(0)
-            end
+            end]]
             --[[if v.draw then
                 v.draw()
             end]]
@@ -26,7 +26,7 @@ return {
         if timer>0.5 then
             transition = math.min(1, transition+delta*2)
             if transition==1 then
-                --setUIMode(start)
+                setUIMode(start)
             end
         end
     end,
