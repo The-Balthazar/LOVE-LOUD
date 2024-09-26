@@ -1,5 +1,5 @@
 function love.conf(t)
-    t.version = "11.5"
+    t.version = "12"
     --t.console = true
     love.filesystem.setIdentity'LOVE-LOUD'
     t.externalstorage = true
