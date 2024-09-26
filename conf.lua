@@ -1,6 +1,6 @@
 function love.conf(t)
     t.version = "11.5"
-    t.console = true
+    --t.console = true
     love.filesystem.setIdentity'LOVE-LOUD'
     t.externalstorage = true
     t.window.fullscreen = false

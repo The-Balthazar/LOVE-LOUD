@@ -1,4 +1,5 @@
-local ftp = require'socket.ftp'
+require'utils.maths'
+require'utils.table'
 
 local uiMode = require'ui.intro'
 
@@ -6,10 +7,7 @@ function setUIMode(mode) uiMode = mode end
 function getUIMode() return uiMode end
 
 function love.load()
-    require'utils.maths'
-    for i, v in pairs(ftp) do
-        print(i, type(v), v)
-    end
+    love.thread.newThread'utils/threads/update.lua':start()
 end
 
 function love.update(delta)
