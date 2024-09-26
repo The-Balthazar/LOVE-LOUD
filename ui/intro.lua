@@ -8,6 +8,7 @@ local timer, transition = 0, 0
 local start
 
 local logoX, logoY, logoS = 960, 90, 0.25
+local seraAlpha = love.math.random(0,2)/2
 
 return {
     update = function(self, delta)
@@ -32,6 +33,9 @@ return {
     draw = function(self)
         local scale = love.graphics.getWidth()/1920
         love.graphics.draw(bg, 0, 0, 0, scale)
+        love.graphics.setColor(1,1,1,seraAlpha)
+        love.graphics.draw(bg2, 0, 0, 0, scale)
+        love.graphics.setColor(1,1,1,1)
         local x = math.lerp(love.graphics.getWidth()/2, logoX*scale, math.easeOutBack(transition, 2.7))
         local y = math.lerp(love.graphics.getHeight()/2, logoY*scale, math.easeOutBack(transition, 2.7))
         local lScale = math.lerp(scale, logoS*scale, math.easeBothElastic(transition, 2.7))
