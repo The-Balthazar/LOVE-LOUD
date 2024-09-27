@@ -16,6 +16,8 @@ function osCall(call, options)
     end
 end
 
+local exeFound = love.filesystem.getInfo'bin/SupremeCommander.exe'
+
 return {
     update = function(self, delta)
         while feedback:peek() do
@@ -68,7 +70,8 @@ return {
             end,
         },
         require'ui.elements.button'{
-            text = 'Launch game',
+            text = exeFound and 'Launch game' or 'Game exe not found',
+            inactive = not exeFound,
             posXN = 0,
             posYN = 1,
             offsetXN = 1.5,
@@ -84,6 +87,11 @@ return {
                 launching = true
                 osCall('bin/SupremeCommander.exe', '/log "..\\LOUD\\bin\\Loud.log" /init "..\\LOUD\\bin\\LoudDataPath.lua"')
                 os.exit()
+            end,
+            update = function(self, UI, delta)
+                if exeFound then
+                    self.inactive = updating
+                end
             end,
         },
     },
