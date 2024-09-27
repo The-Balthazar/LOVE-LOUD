@@ -16,7 +16,14 @@ function osCall(call, options)
     end
 end
 
+local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
 local exeFound = love.filesystem.getInfo'bin/SupremeCommander.exe'
+
+local function updateLoudDataPath()
+    local path = writePath..'bin/LoudDataPath.lua'
+    local str = love.filesystem.read("string", path)
+    love.filesystem.write(path, require'utils.files.LoudDataPath'(str))
+end
 
 return {
     update = function(self, delta)
@@ -91,6 +98,52 @@ return {
             update = function(self, UI, delta)
                 if exeFound then
                     self.inactive = updating
+                end
+            end,
+        },
+        require'ui.elements.button'{
+            text = userConfig.docMods and 'Documents mods enabled' or 'Documents mods disabled',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -0.5,
+            offsetXP = -10,
+            offsetYN = -0.5,
+            offsetYP = -10,
+            type = 'pencil',
+            onPress = function(self, UI)
+                userConfig.docMods = not userConfig.docMods
+                self.text = userConfig.docMods and 'Documents mods enabled' or 'Documents mods disabled'
+                saveUserConfig()
+                updateLoudDataPath()
+            end,
+            onHover = function(self, UI)
+                if self.mouseOver then
+                    self.text = userConfig.docMods and 'Disable documents mods' or 'Enable documents mods'
+                else
+                    self.text = userConfig.docMods and 'Documents mods enabled' or 'Documents mods disabled'
+                end
+            end,
+        },
+        require'ui.elements.button'{
+            text = userConfig.docMaps and 'Documents maps enabled' or 'Documents maps disabled',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -0.5,
+            offsetXP = -10,
+            offsetYN = -1.5,
+            offsetYP = -15,
+            type = 'pencil',
+            onPress = function(self, UI)
+                userConfig.docMaps = not userConfig.docMaps
+                self.text = userConfig.docMaps and 'Documents maps enabled' or 'Documents maps disabled'
+                saveUserConfig()
+                updateLoudDataPath()
+            end,
+            onHover = function(self, UI)
+                if self.mouseOver then
+                    self.text = userConfig.docMaps and 'Disable documents maps' or 'Enable documents maps'
+                else
+                    self.text = userConfig.docMaps and 'Documents maps enabled' or 'Documents maps disabled'
                 end
             end,
         },

@@ -19,6 +19,10 @@ function network.ftpGet(path)
     return table.concat(sink)
 end
 
+local fileHanders = {
+    ['LoudDataPath.lua'] = require'utils.files.LoudDataPath',
+}
+
 function network.ftpGetWrite(path)
     local folder = path:match'^([^/]*)':gsub('\\', '/')
     path = path:gsub('\\', '/')
@@ -27,7 +31,8 @@ function network.ftpGetWrite(path)
     if fileData then
         love.filesystem.createDirectory(writePath..folder)
         feedback:push{path, 'writing'}
-        love.filesystem.write(writePath..path, fileData)
+        local handler = fileHanders[path:match'([^/\\]*)$']
+        love.filesystem.write(writePath..path, handler and handler(fileData) or fileData)
         feedback:push{path, 'done'}
     end
 end
