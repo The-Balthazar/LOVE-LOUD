@@ -7,6 +7,10 @@ local types = {
         width = 200,
         height = 30,
     },
+    icon = {
+        width = 30,
+        height = 30,
+    },
 }
 
 local colours = {
@@ -33,7 +37,12 @@ local buttonCore = {
         )
         love.graphics.rectangle('fill', self.cornerX, self.cornerY, self.width, self.height, sType.rx, sType.ry, sType.segments)
         love.graphics.setColor(self.inactive and colours.midgrey or colours.white)
-        love.graphics.printf(self.text, self.cornerX, self.midY-8*w.scale, self.widthBase, 'center', 0, w.scale)
+        if self.text then
+            love.graphics.printf(self.text, self.cornerX, self.midY-8*w.scale, self.widthBase, 'center', 0, w.scale)
+        elseif self.icon then
+            love.graphics.draw(self.icon, self.midX, self.midY, 0, w.scale, w.scale, self.icon:getWidth()/2, self.icon:getHeight()/2)
+        end
+        love.graphics.setColor(1,1,1)
     end,
 }
 buttonCore.__index = buttonCore
