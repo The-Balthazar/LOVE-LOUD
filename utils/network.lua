@@ -15,7 +15,7 @@ function network.ftpGet(path)
         password= 'ftploud123',
         port    = 21,
     }
-    if not good then return print(path, err) end
+    if not good then return feedback:push((path or 'no path')..': '..(err or 'no error')) end
     return table.concat(sink)
 end
 
