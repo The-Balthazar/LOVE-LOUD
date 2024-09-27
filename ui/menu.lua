@@ -19,7 +19,7 @@ end
 local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
 local exeFound = love.filesystem.getInfo'bin/SupremeCommander.exe'
 
-local function updateLoudDataPath()
+function updateLoudDataPath()
     local path = writePath..'bin/LoudDataPath.lua'
     local str = love.filesystem.read("string", path)
     love.filesystem.write(path, require'utils.files.LoudDataPath'(str))
@@ -147,6 +147,12 @@ return {
                 end
             end,
         },
+        require'ui.elements.strategiciconbutton'('LARGE-classic',  -0.5, -260, -0.5, -10),
+        require'ui.elements.strategiciconbutton'('LARGE',          -0.5, -260, -1.5, -15),
+        require'ui.elements.strategiciconbutton'('MEDIUM-classic', -1.5, -265, -0.5, -10),
+        require'ui.elements.strategiciconbutton'('MEDIUM',         -1.5, -265, -1.5, -15),
+        require'ui.elements.strategiciconbutton'('SMALL-classic',  -2.5, -270, -0.5, -10),
+        require'ui.elements.strategiciconbutton'('SMALL',          -2.5, -270, -1.5, -15),
     },
     draw = function(self)
         require'ui.intro'.draw(self)
