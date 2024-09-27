@@ -52,8 +52,9 @@ jobs:
 
       - name: Zip source and rename
         run: |
-            7z a repository/src build.zip
+            7z a build.zip repository/src/
             mv build.zip build.love
+            ls -R
 
       - name: Append source to executable
         run: |
