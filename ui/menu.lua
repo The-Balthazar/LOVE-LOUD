@@ -65,7 +65,7 @@ return {
             end,
             update = function(self, UI, delta)
                 if not updating and self.text=='Updating' then
-                    self.text = 'Up to date'
+                    self.text = 'Updated'
                 end
             end,
         },
