@@ -1,3 +1,7 @@
+require'utils.maths'
+require'utils.table'
+require'utils.filesystem'
+
 function love.conf(t)
     t.version = "12.0"
     t.console = not love.filesystem.isFused()

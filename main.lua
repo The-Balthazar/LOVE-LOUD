@@ -1,6 +1,4 @@
-require'utils.maths'
-require'utils.table'
-
+userConfig = loadSaveFileData'userConfig' or {}
 local uiMode = require'ui.intro'
 
 function setUIMode(mode) uiMode = mode end
