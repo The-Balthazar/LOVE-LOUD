@@ -36,11 +36,6 @@ jobs:
           fetch-depth: 0
           path: repository
 
-      - name: Install Lua 5.4
-        uses: leafo/gh-actions-lua@v10
-        with:
-          luaVersion: "5.4"
-
       # https://cli.github.com/manual/gh_run_download
       # TODO: determine run number dynamically OR use a valid release version in the future
       - name: Retrieve latest version of Love2D (12.0+)
