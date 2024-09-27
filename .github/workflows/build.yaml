@@ -48,7 +48,7 @@ jobs:
       - name: Extract the binaries
         run: |
           ls -R
-          7z e -o="binaries" "love-12.0-win64.zip"
+          7z e -o "binaries" "love-12.0-win64.zip"
 
       - name: Zip source and rename
         run: |
