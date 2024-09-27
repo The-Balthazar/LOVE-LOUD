@@ -123,6 +123,9 @@ return {
                     self.text = userConfig.docMods and 'Documents mods enabled' or 'Documents mods disabled'
                 end
             end,
+            update = function(self, UI, delta)
+                self.inactive = not userConfig.docMods
+            end,
         },
         require'ui.elements.button'{
             text = userConfig.docMaps and 'Documents maps enabled' or 'Documents maps disabled',
@@ -145,6 +148,9 @@ return {
                 else
                     self.text = userConfig.docMaps and 'Documents maps enabled' or 'Documents maps disabled'
                 end
+            end,
+            update = function(self, UI, delta)
+                self.inactive = not userConfig.docMaps
             end,
         },
         require'ui.elements.strategiciconbutton'('LARGE-classic',  -0.5, -260, -0.5, -10),
