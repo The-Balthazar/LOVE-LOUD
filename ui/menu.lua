@@ -6,7 +6,7 @@ local todo = 0
 local updating, launching
 
 function osCall(call, options)
-    local b = package.cpath:match("%p[\\|/]?%p(%a+)")
+    local b = package.cpath:match'%p[\\|/]?%p(%a+)'
     if b == "dll" then -- windows
         os.execute('start cmd /c call "'..call..'" '..(options or ''))
     elseif b == "dylib" then -- macos
