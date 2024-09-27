@@ -1,0 +1,66 @@
+# Copyright (c) 2024 FAForever
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+# For better understanding, see also: https://love2d.org/wiki/Game_Distribution
+
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: repository
+
+      - name: Install Lua 5.4
+        uses: leafo/gh-actions-lua@v10
+        with:
+          luaVersion: "5.4"
+
+      # https://cli.github.com/manual/gh_run_download
+      # TODO: determine run number dynamically OR use a valid release version in the future
+      - name: Retrieve latest version of Love2D (12.0+)
+        run: |
+          
+          gh run download 10951699930 --repo "https://github.com/love2d/love" --name "love-windows-x64"
+          7z e -o "binaries" "love-windows-x64/love-12.0-win64.zip"
+
+      - name: Zip source and rename
+        run: |
+            7z a repository/src build.zip
+            mv build.zip build.love
+
+      - name: Append source to executable
+        run: |
+            copy /b binaries/love.exe+build.love binaries/loud.exe
+
+      - name: Upload the binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: LOUD-LOVE
+          path: |
+            binaries
