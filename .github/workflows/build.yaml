@@ -22,13 +22,16 @@
 
 name: Build
 
+env:
+  GH_TOKEN: ${{ github.token }}
+
 on:
   workflow_dispatch:
   push:
 
 jobs:
   windows:
-    runs-on: windows-latest
+    runs-on: windows-latest # https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md
     steps:
       - name: Checkout
         uses: actions/checkout@v4
