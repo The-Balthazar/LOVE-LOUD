@@ -11,7 +11,6 @@ function love.load()
     if love.filesystem.isFused() then
         assert(love.filesystem.mountFullPath(love.filesystem.getSourceBaseDirectory(), 'SCFA', 'readwrite', true), "Failed to mount game folder with write permissions.")
     end
-    love.thread.newThread'utils/threads/update.lua':start()
 end
 
 local windowData = {}
