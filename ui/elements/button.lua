@@ -2,7 +2,11 @@ local types = {
     regular = {
         width = 190,
         height = 60,
-    }
+    },
+    pencil = {
+        width = 200,
+        height = 30,
+    },
 }
 
 local colours = {
@@ -10,6 +14,8 @@ local colours = {
     over = {0,38/255,66/255},
     upinactive = {0.07,0.07,0.07},
     overinactive = {0.13,0.13,0.13},
+    white = {1,1,1},
+    midgrey = {0.5,0.5,0.5},
 }
 
 local buttonCore = {
@@ -26,7 +32,7 @@ local buttonCore = {
                                                          colours.upinactive
         )
         love.graphics.rectangle('fill', self.cornerX, self.cornerY, self.width, self.height, sType.rx, sType.ry, sType.segments)
-        love.graphics.setColor(1,1,1)
+        love.graphics.setColor(self.inactive and colours.midgrey or colours.white)
         love.graphics.printf(self.text, self.cornerX, self.midY-8*w.scale, self.widthBase, 'center', 0, w.scale)
     end,
 }
