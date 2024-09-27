@@ -17,7 +17,7 @@ function osCall(call, options)
 end
 
 local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
-local exeFound = love.filesystem.getInfo'bin/SupremeCommander.exe'
+local exeFound = love.filesystem.getInfo('SCFA/bin/SupremeCommander.exe')
 
 function updateLoudDataPath()
     local path = writePath..'bin/LoudDataPath.lua'
