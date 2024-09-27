@@ -61,7 +61,11 @@ function love.mousemoved(x, y, dx, dy, istouch)
     if uiMode.objects then
         for i, v in ipairs(uiMode.objects) do
             if v.mouse and v.positional then
+                local oldHover = v.mouseOver
                 v.mouseOver = v.cornerX<x and v.cornerX+v.width>x and v.cornerY<y and v.cornerY+v.height>y
+                if oldHover~=v.mouseOver and v.onHover then
+                    v:onHover(uiMode)
+                end
             end
         end
     end
