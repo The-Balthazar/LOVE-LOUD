@@ -43,14 +43,16 @@ jobs:
       # TODO: cache it perhaps
       - name: Retrieve latest version of Love2D (12.0+)
         run: |
-          
           gh run download 10951699930 --repo "https://github.com/love2d/love" --name "love-windows-x64"
+
+      - name: Extract the binaries
+        run: |
           ls -R
           7z e -o="binaries" "love-windows-x64/love-12.0-win64.zip"
 
       - name: Zip source and rename
         run: |
-            7za a repository/src build.zip
+            7z a repository/src build.zip
             mv build.zip build.love
 
       - name: Append source to executable
