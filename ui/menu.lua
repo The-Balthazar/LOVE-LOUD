@@ -106,9 +106,9 @@ return {
             posXN = 1,
             posYN = 1,
             offsetXN = -0.5,
-            offsetXP = -10,
+            offsetXP = -50,
             offsetYN = -0.5,
-            offsetYP = -10,
+            offsetYP = -50,
             type = 'pencil',
             onPress = function(self, UI)
                 userConfig.docMods = not userConfig.docMods
@@ -132,9 +132,9 @@ return {
             posXN = 1,
             posYN = 1,
             offsetXN = -0.5,
-            offsetXP = -10,
+            offsetXP = -50,
             offsetYN = -1.5,
-            offsetYP = -15,
+            offsetYP = -55,
             type = 'pencil',
             onPress = function(self, UI)
                 userConfig.docMaps = not userConfig.docMaps
@@ -153,12 +153,12 @@ return {
                 self.inactive = not userConfig.docMaps
             end,
         },
-        require'ui.elements.strategiciconbutton'('LARGE-classic',  -0.5, -260, -0.5, -10),
-        require'ui.elements.strategiciconbutton'('LARGE',          -0.5, -260, -1.5, -15),
-        require'ui.elements.strategiciconbutton'('MEDIUM-classic', -1.5, -265, -0.5, -10),
-        require'ui.elements.strategiciconbutton'('MEDIUM',         -1.5, -265, -1.5, -15),
-        require'ui.elements.strategiciconbutton'('SMALL-classic',  -2.5, -270, -0.5, -10),
-        require'ui.elements.strategiciconbutton'('SMALL',          -2.5, -270, -1.5, -15),
+        require'ui.elements.strategiciconbutton'('LARGE-classic',  -0.5, -300, -0.5, -50),
+        require'ui.elements.strategiciconbutton'('LARGE',          -0.5, -300, -1.5, -55),
+        require'ui.elements.strategiciconbutton'('MEDIUM-classic', -1.5, -305, -0.5, -50),
+        require'ui.elements.strategiciconbutton'('MEDIUM',         -1.5, -305, -1.5, -55),
+        require'ui.elements.strategiciconbutton'('SMALL-classic',  -2.5, -310, -0.5, -50),
+        require'ui.elements.strategiciconbutton'('SMALL',          -2.5, -310, -1.5, -55),
     },
     draw = function(self)
         require'ui.intro'.draw(self)
