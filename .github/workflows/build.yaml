@@ -47,7 +47,6 @@ jobs:
 
       - name: Extract the binaries
         run: |
-          ls -R
           7z x "love-12.0-win64.zip" -o"binaries"
 
       - name: Zip source and rename
@@ -57,8 +56,9 @@ jobs:
             ls -R
 
       - name: Append source to executable
+        shell: bash
         run: |
-            cat binaries/love.exe build.love > binaries/loud.exe
+            cat "binaries/love.exe" "build.love" > "binaries/loud.exe"
 
       - name: Upload the binaries
         uses: actions/upload-artifact@v4
