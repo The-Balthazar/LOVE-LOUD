@@ -59,8 +59,16 @@ jobs:
         run: |
           cat "binaries/love.exe" "build.love" > "binaries/loud.exe"
 
-          # remove the old executable
-          rm "binaries/love.exe"
+      - name: Clean up the binaries folder
+        working-directory: binaries
+        shell: bash
+        run: |
+          rm "love.exe"
+          rm "changes.txt"
+          rm "readme.txt"
+          rm "game.ico"
+          rm "love.ico"
+          rm "lovec.exe"
 
       - name: Upload the binaries
         uses: actions/upload-artifact@v4
