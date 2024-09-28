@@ -57,10 +57,10 @@ jobs:
 
       - name: Zip source and rename
         shell: bash
+        working-directory: repository/src
         run: |
-            7z a -r0 build.zip repository/src/*
-            mv build.zip build.love
-            ls -R
+            7z a -r build.zip .
+            mv build.zip ../../build.love
 
       - name: Test upload
         uses: actions/upload-artifact@v4
