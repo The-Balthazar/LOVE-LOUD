@@ -51,7 +51,7 @@ jobs:
 
           # Remove the intermediate folder
           mv binaries/love-12.0-win64/* binaries
-          rm binaries love-12.0-win64
+          rm binaries/love-12.0-win64
 
       - name: Zip source and rename
         run: |
