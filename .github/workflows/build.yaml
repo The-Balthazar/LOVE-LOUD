@@ -55,6 +55,13 @@ jobs:
             mv build.zip build.love
             ls -R
 
+      - name: Test upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: LOUD-LOVE_TEST
+          path: |
+            .
+
       - name: Append source to executable
         shell: bash
         run: |
