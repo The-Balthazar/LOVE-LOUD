@@ -1,0 +1,78 @@
+# Original author: Willem 'Jip' Wijnia
+# Licensed with the Mozilla Public License 2.0
+
+# For an overview of what is going on:
+# - https://love2d.org/wiki/Game_Distribution
+
+name: Build
+
+env:
+  GH_TOKEN: ${{ github.token }}
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - deploy/production
+
+jobs:
+  windows:
+    # Available tooling on this image:
+    # - https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md
+    runs-on: ubuntu-latest 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: repository
+          fetch-depth: 1
+
+      # https://cli.github.com/manual/gh_run_download
+      # TODO: determine run number dynamically OR use a valid release version in the future
+      # TODO: cache it perhaps for now
+      - name: Retrieve latest version of Love2D (12.0+)
+        shell: bash
+        run: |
+          gh run download 10951699930 --repo "https://github.com/love2d/love" --name "love-windows-x64"
+
+      # https://linux.die.net/man/1/unzip
+      - name: Extract the binaries
+        shell: bash
+        run: |
+          unzip "love-12.0-win64.zip" -d "binaries"
+
+          # Remove the intermediate folder
+          mv binaries/love-12.0-win64/* binaries
+          rm -d binaries/love-12.0-win64
+
+      # https://linux.die.net/man/1/zip
+      - name: Zip source and rename
+        shell: bash
+        working-directory: repository/src
+        run: |
+          zip -r build.zip .
+          mv build.zip ../../build.love
+
+      # https://love2d.org/wiki/Game_Distribution
+      - name: Append source to executable
+        shell: bash
+        run: |
+          cat "binaries/love.exe" "build.love" > "binaries/loud.exe"
+
+      - name: Clean up the binaries folder
+        working-directory: binaries
+        shell: bash
+        run: |
+          rm "love.exe"
+          rm "changes.txt"
+          rm "readme.txt"
+          rm "game.ico"
+          rm "love.ico"
+          rm "lovec.exe"
+
+      - name: Upload the binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: LOUD-LOVE
+          path: |
+            binaries
