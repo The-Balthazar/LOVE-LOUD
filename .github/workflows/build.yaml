@@ -49,6 +49,10 @@ jobs:
         run: |
           7z x "love-12.0-win64.zip" -o"binaries"
 
+          # Remove the intermediate folder
+          mv binaries/love-12.0-win64/* binaries
+          rm binaries love-12.0-win64
+
       - name: Zip source and rename
         run: |
             7z a build.zip repository/src/
