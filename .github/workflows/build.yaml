@@ -58,7 +58,7 @@ jobs:
       - name: Zip source and rename
         shell: bash
         run: |
-            7z a -r0 build.zip repository/src
+            7z a -r0 build.zip repository/src/*
             mv build.zip build.love
             ls -R
 
