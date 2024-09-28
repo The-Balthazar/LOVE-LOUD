@@ -58,7 +58,7 @@ jobs:
 
       - name: Append source to executable
         run: |
-            copy /b binaries/love.exe+build.love binaries/loud.exe
+            cat binaries/love.exe build.love > binaries/loud.exe
 
       - name: Upload the binaries
         uses: actions/upload-artifact@v4
