@@ -256,7 +256,7 @@ return {
             offsetYP = -55,
             type = 'pencil2',
             onPress = function(self, UI)
-                love.system.openURL(love.filesystem.getRealDirectory(writePath..'bin'))
+                love.system.openURL(love.filesystem.getRealDirectory(writePath)..'/bin')
             end,
         },
         require'ui.elements.button'{
@@ -285,8 +285,7 @@ return {
             type = 'pencil2',
             onPress = function(self, UI)
                 love.filesystem.createDirectory(writePath..'usermaps')
-                print(writePath..'usermaps')
-                love.system.openURL(love.filesystem.getRealDirectory(writePath..'usermaps'))
+                love.system.openURL(love.filesystem.getRealDirectory(writePath)..'/usermaps')
             end,
         },
         require'ui.elements.button'{
@@ -301,7 +300,7 @@ return {
             type = 'pencil2',
             onPress = function(self, UI)
                 love.filesystem.createDirectory(writePath..'usermods')
-                love.system.openURL(love.filesystem.getRealDirectory(writePath..'usermods'))
+                love.system.openURL(love.filesystem.getRealDirectory(writePath)..'/usermods')
             end,
         },
 
