@@ -26,19 +26,17 @@ function love.update(delta)
     end
     if uiMode.objects then
         for i, v in ipairs(uiMode.objects) do
-            if (not v.showIf or v:showIf(uiMode)) then
-                if v.positional then --XN/YN normalised 0-1 screenspace values. XP/YP unscaled pixel values
-                    local w = windowData
-                    v.width = v.widthBase *w.scale
-                    v.height= v.heightBase*w.scale
-                    v.midX = v.posXN*w.w+(v.offsetXN and v.offsetXN*v.width  or 0)+(v.offsetXP and v.offsetXP*w.scale or 0)
-                    v.midY = v.posYN*w.h+(v.offsetYN and v.offsetYN*v.height or 0)+(v.offsetYP and v.offsetYP*w.scale or 0)
-                    v.cornerX = v.midX-v.width/2
-                    v.cornerY = v.midY-v.height/2
-                end
-                if v.update then
-                    v:update(uiMode, delta)
-                end
+            if v.positional then --XN/YN normalised 0-1 screenspace values. XP/YP unscaled pixel values
+                local w = windowData
+                v.width = v.widthBase *w.scale
+                v.height= v.heightBase*w.scale
+                v.midX = v.posXN*w.w+(v.offsetXN and v.offsetXN*v.width  or 0)+(v.offsetXP and v.offsetXP*w.scale or 0)
+                v.midY = v.posYN*w.h+(v.offsetYN and v.offsetYN*v.height or 0)+(v.offsetYP and v.offsetYP*w.scale or 0)
+                v.cornerX = v.midX-v.width/2
+                v.cornerY = v.midY-v.height/2
+            end
+            if v.update then
+                v:update(uiMode, delta)
             end
         end
     end
