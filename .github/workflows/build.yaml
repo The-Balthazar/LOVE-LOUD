@@ -19,7 +19,7 @@ jobs:
   windows:
     # Available tooling on this image:
     # - https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
       - name: Retrieve latest version of Love2D (12.0+)
         shell: bash
         run: |
-          gh run download 10951699930 --repo "https://github.com/love2d/love" --name "love-windows-x64"
+          gh run download 11206050023 --repo "https://github.com/love2d/love" --name "love-windows-x64"
 
       # https://linux.die.net/man/1/unzip
       - name: Extract the binaries
@@ -57,7 +57,7 @@ jobs:
       - name: Append source to executable
         shell: bash
         run: |
-          cat "binaries/love.exe" "build.love" > "binaries/loud.exe"
+          cat "binaries/love.exe" "build.love" > "binaries/LOVE-LOUD.exe"
 
       - name: Clean up the binaries folder
         working-directory: binaries
