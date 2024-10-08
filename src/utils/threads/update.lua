@@ -12,7 +12,7 @@ for folder, file, hash, size in (fileinfo):gmatch'([^\r\n]+)\\([^\r\n\\]+),0x([0
     local localPath = writePath..remotePath:gsub('\\', '/')
     local hashLocal = love.filesystem.getInfo(localPath) and love.data.encode('string', 'hex', love.data.hash('sha1', love.filesystem.read(localPath))):upper()
 
-    if folder:match'[^\r\n\\]+'~='maps' and hashLocal~=hash then
+    if hashLocal~=hash then
         getChannel:push(remotePath)
         feedback:push(1)
         if #threads<5 then
