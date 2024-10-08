@@ -7,8 +7,16 @@ local types = {
         width = 200,
         height = 30,
     },
+    pencil2 = {
+        width = 190,
+        height = 30,
+    },
     icon = {
         width = 30,
+        height = 30,
+    },
+    tab = {
+        width = 100,
         height = 30,
     },
 }
