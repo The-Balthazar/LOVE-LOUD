@@ -10,8 +10,7 @@ local fileinfo = require'utils.network'.ftpGet('SCFA_FileInfo.txt')
 for folder, file, hash, size in (fileinfo):gmatch'([^\r\n]+)\\([^\r\n\\]+),0x([0-9A-F]+),([0-9]+)' do
     local remotePath = folder..'/'..file
     local localPath = writePath..remotePath:gsub('\\', '/')
-    local hashLocal = love.filesystem.getInfo(localPath) and love.data.encode('string', 'hex', love.data.hash('sha1', love.filesystem.read(localPath))):upper()
-
+    local hashLocal = love.filesystem.getInfo(localPath) and love.data.encode('string', 'hex', love.data.hash('string', 'sha1', love.filesystem.read(localPath))):upper()
     if hashLocal~=hash then
         getChannel:push(remotePath)
         feedback:push(1)
