@@ -139,6 +139,22 @@ return {
                 menuActiveTab = 'folders'
             end,
         },
+        require'ui.elements.button'{
+            text = 'Links',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -0.5,
+            offsetXP = -125,
+            offsetYN = -0.5,
+            offsetYP = -125,
+            type = 'tab',
+            update = function(self, UI, delta)
+                self.inactive = menuActiveTab~='links'
+            end,
+            onPress = function(self, UI)
+                menuActiveTab = 'links'
+            end,
+        },
         {
             positional = true,
             widthBase = 385,
@@ -255,6 +271,7 @@ return {
             offsetYN = -1.5,
             offsetYP = -55,
             type = 'pencil2',
+            icon = folderIcon,
             onPress = function(self, UI)
                 love.system.openURL(love.filesystem.getRealDirectory(writePath)..'/bin')
             end,
@@ -269,6 +286,7 @@ return {
             offsetYN = -0.5,
             offsetYP = -50,
             type = 'pencil2',
+            icon = folderIcon,
             onPress = function(self, UI)
                 love.system.openURL(love.filesystem.getFullCommonPath'userdocuments'..'/my games/Gas Powered Games/Supreme Commander Forged Alliance/replays')
             end,
@@ -283,6 +301,7 @@ return {
             offsetYN = -1.5,
             offsetYP = -55,
             type = 'pencil2',
+            icon = folderIcon,
             onPress = function(self, UI)
                 love.filesystem.createDirectory(writePath..'usermaps')
                 love.system.openURL(love.filesystem.getRealDirectory(writePath)..'/usermaps')
@@ -298,9 +317,55 @@ return {
             offsetYN = -0.5,
             offsetYP = -50,
             type = 'pencil2',
+            icon = folderIcon,
             onPress = function(self, UI)
                 love.filesystem.createDirectory(writePath..'usermods')
                 love.system.openURL(love.filesystem.getRealDirectory(writePath)..'/usermods')
+            end,
+        },
+
+        require'ui.elements.button'{
+            showIf = function(self, UI, delta) return menuActiveTab=='links' end,
+            text = 'LOUD Discord',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -1.5,
+            offsetXP = -35,
+            offsetYN = -1.5,
+            offsetYP = -55,
+            type = 'pencil',
+            icon = love.graphics.newImage'graphics/discord.png',
+            onPress = function(self, UI)
+                love.system.openURL('https://discord.gg/ZCC6tns6vb')
+            end,
+            onHover = function(self, UI)
+                if self.mouseOver then
+                    self.text = 'discord.gg/ZCC6tns6vb'
+                else
+                    self.text = 'LOUD Discord'
+                end
+            end,
+        },
+        require'ui.elements.button'{
+            showIf = function(self, UI, delta) return menuActiveTab=='links' end,
+            text = 'Donate on PayPal',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -1.5,
+            offsetXP = -35,
+            offsetYN = -0.5,
+            offsetYP = -50,
+            type = 'pencil',
+            icon = love.graphics.newImage'graphics/pp.png',
+            onPress = function(self, UI)
+                love.system.openURL('https://paypal.me/TheLOUDProject')
+            end,
+            onHover = function(self, UI)
+                if self.mouseOver then
+                    self.text = 'paypal.me/TheLOUDProject'
+                else
+                    self.text = 'Donate on PayPal'
+                end
             end,
         },
 
