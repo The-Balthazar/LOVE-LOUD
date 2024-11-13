@@ -411,6 +411,21 @@ return {
                 love.thread.newThread'utils/threads/generateCRC.lua':start()
             end,
         },
+        --[[require'ui.elements.button'{
+            showIf = function(self, UI, delta) return menuActiveTab=='dev' end,
+            inactive = not exeFound,
+            text = exeFound and 'Create LOUD launch symlink' or 'Can\'t find exe to make link',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -0.5,
+            offsetXP = -50,
+            offsetYN = -1.5,
+            offsetYP = -55,
+            type = 'pencil2',
+            onPress = function(self, UI)
+                createShortcut('LOUD', 'bin/SupremeCommander.exe /log ..\\LOUD\\bin\\LOUD.log /init ..\\LOUD\\bin\\LoudDataPath.lua')
+            end,
+        },]]
 
     },
     draw = function(self)
