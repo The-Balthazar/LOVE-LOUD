@@ -5,17 +5,6 @@ local done = 0
 local todo = 0
 local updating, launching
 
-function osCall(call, options)
-    local b = package.cpath:match'%p[\\|/]?%p(%a+)'
-    if b == "dll" then -- windows
-        os.execute('start cmd /c call "'..call..'" '..(options or ''))
-    elseif b == "dylib" then -- macos
-        os.execute('chmod +x "'..call..'" '..(options or ''))
-    elseif b == "so" then -- Linux
-        os.execute('chmod +x "'..call..'" '..(options or ''))
-    end
-end
-
 local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
 local exeFound = love.filesystem.getInfo('SCFA/bin/SupremeCommander.exe')
 
