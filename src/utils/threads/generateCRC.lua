@@ -19,7 +19,7 @@ function enumerate(path)
         else
             local str = ('%s,0x%s,%d\n'):format(
                 thisPath:gsub('/', '\\'),
-                love.data.encode('string', 'hex', love.data.hash('sha1', love.filesystem.read(thisPath))):upper(),
+                love.data.encode('string', 'hex', love.data.hash('string', 'sha1', love.filesystem.read(thisPath))):upper(),
                 info.size
             )
             table.insert(SCFA_FileInfo, str)
