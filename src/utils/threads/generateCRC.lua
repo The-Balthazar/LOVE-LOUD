@@ -27,9 +27,12 @@ function enumerate(path)
     end
 end
 
+love.thread.getChannel'log':push('Enumerating for CRC')
 for i, path in ipairs(paths) do
+    love.thread.getChannel'log':push('Enumerating for CRC: '..path)
     enumerate(path)
 end
 
 local infoPath = writePath..'SCFA_FileInfo.txt'
 love.filesystem.write(infoPath, table.concat(SCFA_FileInfo))
+love.thread.getChannel'log':push('SCFA_FileInfo.txt generated')
