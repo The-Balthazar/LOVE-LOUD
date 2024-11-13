@@ -27,9 +27,9 @@ function enumerate(path)
     end
 end
 
-love.thread.getChannel'log':push('Enumerating for CRC')
+love.thread.getChannel'log':push('Generating CRC')
 for i, path in ipairs(paths) do
-    love.thread.getChannel'log':push('Enumerating for CRC: '..path)
+    love.thread.getChannel'log':push('Enumerating: '..path)
     enumerate(path)
 end
 
