@@ -386,6 +386,28 @@ return {
                 end
             end,
         },
+        require'ui.elements.button'{
+            showIf = function(self, UI, delta) return menuActiveTab=='links' end,
+            text = 'OneDrive',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -0.5,
+            offsetXP = -50,
+            offsetYN = -1.5,
+            offsetYP = -55,
+            type = 'tab',
+            icon = love.graphics.newImage'graphics/onedrive.png',
+            onPress = function(self, UI)
+                love.system.openURL('https://onedrive.live.com/?authkey=!APAfOJusxNHJJWM&id=730910080073E6E6!4068&cid=730910080073E6E6')
+            end,
+            onHover = function(self, UI)
+                if self.mouseOver then
+                    self.text = 'live.com ...'
+                else
+                    self.text = 'OneDrive'
+                end
+            end,
+        },
 
         require'ui.elements.button'{
             showIf = function(self, UI, delta) return menuActiveTab=='dev' end,
