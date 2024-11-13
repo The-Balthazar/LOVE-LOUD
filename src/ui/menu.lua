@@ -145,8 +145,6 @@ return {
             end,
         },
         require'ui.elements.button'{
-            showIf = function(self, UI, delta) return userConfig.dev end,
-            text = 'Dev',
             width = 50,
             posXN = 1,
             posYN = 1,
@@ -155,6 +153,7 @@ return {
             offsetYN = -0.5,
             offsetYP = -125,
             type = 'icon',
+            icon = love.graphics.newImage'graphics/wrench.png',
             update = function(self, UI, delta)
                 self.inactive = menuActiveTab~='dev'
             end,
