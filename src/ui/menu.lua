@@ -97,7 +97,7 @@ return {
         },
 
         require'ui.elements.button'{
-            text = 'Config',
+            text = 'Game config',
             posXN = 1,
             posYN = 1,
             offsetXN = -0.5,
@@ -113,7 +113,7 @@ return {
             end,
         },
         require'ui.elements.button'{
-            text = 'Folders',
+            text = 'Folder links',
             posXN = 1,
             posYN = 1,
             offsetXN = -0.5,
@@ -129,7 +129,7 @@ return {
             end,
         },
         require'ui.elements.button'{
-            text = 'Links',
+            text = 'Web links',
             posXN = 1,
             posYN = 1,
             offsetXN = -0.5,
