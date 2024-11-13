@@ -32,16 +32,16 @@ end
 
 function recursiveGetDirectoryItems(folder, list)
     list = list or {}
-	for i, filename in ipairs(love.filesystem.getDirectoryItems(folder)) do
-		local filePath = folder..'/'..filename
-		local info = love.filesystem.getInfo(filePath)
-		if info and info.type == 'file' then
+    for i, filename in ipairs(love.filesystem.getDirectoryItems(folder)) do
+        local filePath = folder..'/'..filename
+        local info = love.filesystem.getInfo(filePath)
+        if info and info.type == 'file' then
             table.insert(list, filePath)
-		elseif info and info.type == 'directory' then
+        elseif info and info.type == 'directory' then
             recursiveGetDirectoryItems(filePath, list)
-		end
-	end
-	return list
+        end
+    end
+    return list
 end
 
 function rename(path, newpath)
