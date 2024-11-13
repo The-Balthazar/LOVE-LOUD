@@ -155,6 +155,24 @@ return {
                 menuActiveTab = 'links'
             end,
         },
+        require'ui.elements.button'{
+            showIf = function(self, UI, delta) return userConfig.dev end,
+            text = 'Dev',
+            width = 50,
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -0.5,
+            offsetXP = -50,
+            offsetYN = -0.5,
+            offsetYP = -125,
+            type = 'icon',
+            update = function(self, UI, delta)
+                self.inactive = menuActiveTab~='dev'
+            end,
+            onPress = function(self, UI)
+                menuActiveTab = 'dev'
+            end,
+        },
         {
             positional = true,
             widthBase = 385,
@@ -366,6 +384,21 @@ return {
                 else
                     self.text = 'Donate on PayPal'
                 end
+            end,
+        },
+
+        require'ui.elements.button'{
+            showIf = function(self, UI, delta) return menuActiveTab=='dev' end,
+            text = 'Generate SCFA_FileInfo.txt',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -1.5,
+            offsetXP = -55,
+            offsetYN = -1.5,
+            offsetYP = -55,
+            type = 'pencil2',
+            onPress = function(self, UI)
+                love.thread.newThread'utils/threads/generateCRC.lua':start()
             end,
         },
 
