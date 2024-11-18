@@ -26,7 +26,7 @@ for folder, file, hash, size in (fileinfo):gmatch'([^\r\n]+)\\([^\r\n\\]+),0x([0
         end
     end
     if toClean[folder] or toClean[folder:match'^[^/\\]*'] then
-        cleanFiles['/'..localPath] = folder
+        cleanFiles['/'..localPath:lower()] = folder
     end
 end
 
@@ -60,8 +60,8 @@ function rename(path, newpath)
 end
 
 for checkFolder, output in pairs(toClean) do
-    for i, path in ipairs(recursiveGetDirectoryItems(writePath..'/'..checkFolder)) do
-        if not cleanFiles[path] then
+    for i, path in ipairs(recursiveGetDirectoryItems('/'..writePath..checkFolder)) do
+        if not cleanFiles[path:lower()] then
             if rename(path, (path:gsub(checkFolder, output, 1))) then
                 checkEmpty[ path:match'(.*)/[^/]*' ] = true
             end
