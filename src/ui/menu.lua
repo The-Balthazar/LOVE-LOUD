@@ -431,9 +431,12 @@ return {
     draw = function(self)
         require'ui.intro'.draw(self)
         local scale = love.graphics.getWidth()/1152
+        love.graphics.printf(table.concat(log, '\n'), 576*scale, 337*scale, 556, 'right', 0, scale, scale)
+        --[[
         for i, text in ipairs(log) do
             love.graphics.printf(text, 576*scale, (337+(i-1)*20)*scale, 556, 'right', 0, scale, scale)
         end
+        ]]
         if updating~=nil then
             love.graphics.printf(('Files downloading: %d   Queued: %d   Finished: %d'):format(#files, todo, done), 20*scale, 337*scale, 556, 'right', 0, scale, scale)
         end
