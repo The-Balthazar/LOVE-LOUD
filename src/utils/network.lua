@@ -37,4 +37,27 @@ function network.ftpGetWrite(path)
     end
 end
 
+function network.getMapLibData()
+    local code, body, headers = require'https'.request'https://theloudproject.org:8081/maps/'
+    if code~=200 then return 'Communication error' end
+    local mapsData = {}
+    for mapJsonRaw in body:gmatch'%b{}' do
+        local data = {}
+        for key, numberStr in mapJsonRaw:gmatch'(%b"")%s*:%s*(%d*)%s*,' do
+            data[key:sub(2,-2)] = tonumber(numberStr)
+        end
+        for key, str in mapJsonRaw:gmatch'(%b"")%s*:%s*(%b"")%s*,' do
+            data[key:sub(2,-2)] = str:sub(2,-2)
+        end
+        table.insert(mapsData, data)
+    end
+    return mapsData
+end
+
+function network.getMapLibFile(file)
+    local code, body, headers = require'https'.request('https://theloudproject.org:8081/'..file)
+    if code~=200 then return file, 'Communication error' end
+    return file, body
+end
+
 return network

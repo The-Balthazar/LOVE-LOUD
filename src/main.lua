@@ -1,7 +1,11 @@
 userConfig = loadSaveFileData'userConfig' or {}
 local uiMode = require'ui.intro'
 
-function setUIMode(mode) uiMode = mode end
+function setUIMode(mode)
+    uiMode = mode
+    love.update(0)
+    love.mousemoved(love.mouse.getX() or 0, love.mouse.getY() or 0, 0, 0)
+end
 function getUIMode() return uiMode end
 
 function love.load()
@@ -13,11 +17,16 @@ end
 
 local windowData = {}
 
+function getWindowData() return windowData end
+
 function love.resize(x,y)
     local w = windowData
     w.w, w.h = x, y
     w.scale = x/1152
     w.scaleY = y/648
+    if uiMode.resize then
+        uiMode:resize(w)
+    end
 end
 
 function love.update(delta)
@@ -44,7 +53,7 @@ end
 
 function love.draw()
     if uiMode.draw then
-        uiMode:draw()
+        uiMode:draw(windowData)
     end
     if uiMode.objects then
         for i, v in ipairs(uiMode.objects) do
@@ -56,6 +65,9 @@ function love.draw()
 end
 
 function love.mousemoved(x, y, dx, dy, istouch)
+    if uiMode.mousemoved then
+        uiMode:mousemoved(x, y, dx, dy, istouch, windowData)
+    end
     if uiMode.objects then
         for i, v in ipairs(uiMode.objects) do
             if v.mouse and v.positional and (not v.showIf or v:showIf(uiMode)) then
@@ -70,11 +82,39 @@ function love.mousemoved(x, y, dx, dy, istouch)
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
+    if uiMode.mousepressed then
+        uiMode:mousepressed(x, y, button, istouch, presses)
+    end
     if uiMode.objects then
         for i, v in ipairs(uiMode.objects) do
             if v.mouse and v.positional and v.mouseOver and v.onPress and (not v.showIf or v:showIf(uiMode)) then
                 v:onPress(uiMode)
             end
         end
+    end
+end
+
+function love.mousereleased(x, y, button, istouch, presses)
+    if uiMode.mousereleased then
+        uiMode:mousereleased(x, y, button, istouch, presses)
+    end
+    if uiMode.objects then
+        for i, v in ipairs(uiMode.objects) do
+            if v.mouse and v.positional and v.mouseOver and v.onRelease and (not v.showIf or v:showIf(uiMode)) then
+                v:onRelease(uiMode)
+            end
+        end
+    end
+end
+
+function love.wheelmoved(x, y)
+    if uiMode.wheelmoved then
+        uiMode:wheelmoved(x, y)
+    end
+end
+
+function love.keypressed(key, ...)
+    if key=='escape' and uiMode.goBack then
+        uiMode:goBack()
     end
 end

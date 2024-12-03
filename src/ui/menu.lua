@@ -48,35 +48,12 @@ return {
     end,
     objects = {
         require'ui.elements.button'{
-            text = 'Update',
-            posXN = 0,
-            posYN = 1,
-            offsetXN = 0.5,
-            offsetXP = 50,
-            offsetYN = -0.5,
-            offsetYP = -50,
-            type = 'regular',
-            onPress = function(self, UI)
-                if launching then return end
-                if self.inactive then return end
-                self.inactive = true
-                updating = true
-                self.text = 'Updating'
-                love.thread.newThread'utils/threads/update.lua':start()
-            end,
-            update = function(self, UI, delta)
-                if not updating and self.text=='Updating' then
-                    self.text = 'Updated'
-                end
-            end,
-        },
-        require'ui.elements.button'{
             text = exeFound and 'Launch game' or 'Game exe not found',
             inactive = not exeFound,
             posXN = 0,
             posYN = 1,
-            offsetXN = 1.5,
-            offsetXP = 100,
+            offsetXN = 0.5,
+            offsetXP = 50,
             offsetYN = -0.5,
             offsetYP = -50,
             type = 'regular',
@@ -93,6 +70,58 @@ return {
                 if exeFound then
                     self.inactive = updating
                 end
+            end,
+        },
+
+        require'ui.elements.button'{
+            text = 'Update LOUD',
+            posXN = 0,
+            posYN = 1,
+            offsetXN = 0.5,
+            offsetXP = 297,
+            offsetYN = -0.5,
+            offsetYP = -50,
+            type = 'narrow',
+            onPress = function(self, UI)
+                if launching then return end
+                if self.inactive then return end
+                self.inactive = true
+                updating = true
+                self.text = 'Updating'
+                love.thread.newThread'utils/threads/update.lua':start()
+            end,
+            update = function(self, UI, delta)
+                if not updating and self.text=='Updating' then
+                    self.text = 'Updated'
+                end
+            end,
+        },
+        require'ui.elements.button'{
+            text = 'Update maps',
+            inactive = true,
+            posXN = 0,
+            posYN = 1,
+            offsetXN = 1.5,
+            offsetXP = 302,
+            offsetYN = -0.5,
+            offsetYP = -50,
+            type = 'narrow',
+            onPress = function(self, UI)
+            end,
+            update = function(self, UI, delta)
+            end,
+        },
+        require'ui.elements.button'{
+            icon = love.graphics.newImage'graphics/maps.png',
+            posXN = 0,
+            posYN = 1,
+            offsetXN = 0.5,
+            offsetXP = 607,
+            offsetYN = -0.5,
+            offsetYP = -50,
+            type = 'bigicon',
+            onPress = function(self, UI)
+                setUIMode(require'ui.mapLib')
             end,
         },
 

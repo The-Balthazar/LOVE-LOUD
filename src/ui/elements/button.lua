@@ -1,6 +1,10 @@
 local types = {
     regular = {
-        width = 190,
+        width = 197,
+        height = 60,
+    },
+    narrow = {
+        width = 150,
         height = 60,
     },
     pencil = {
@@ -10,6 +14,10 @@ local types = {
     pencil2 = {
         width = 190,
         height = 30,
+    },
+    bigicon = {
+        width = 60,
+        height = 60,
     },
     icon = {
         width = 30,
