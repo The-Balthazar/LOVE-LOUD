@@ -33,7 +33,7 @@ jobs:
       - name: Retrieve latest version of Love2D (12.0+)
         shell: bash
         run: |
-          gh run download 11761866526 --repo "https://github.com/love2d/love" --name "love-windows-x64"
+          gh run download 12107999060 --repo "https://github.com/love2d/love" --name "love-windows-x64"
 
       # https://linux.die.net/man/1/unzip
       - name: Extract the binaries
