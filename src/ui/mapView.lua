@@ -2,14 +2,6 @@ local selected
 local textHeadings, textValues, textDesc
 local white, grey, clear = {1,1,1}, {0.5, 0.5, 0.5}, {1,1,1,0}
 
-local sizes = {
-    [0] = '5.12 km',
-    '10.24 km',
-    '20.48 km',
-    '40.96 km',
-    '81.92 km',
-}
-
 return {
     set = function(self, data)
         if type(data)=='table' and type(data.file)=='string' then
@@ -18,10 +10,10 @@ return {
             textHeadings, textValues, textDesc = love.graphics.newTextBatch(font), love.graphics.newTextBatch(font), love.graphics.newTextBatch(font)
 
             textValues:setf({
-                white, selected.name         or '<error: no name>', grey, ' (V', selected.version or '<error: no version>', ')',
+                white, selected.name         or '<error: no name>', grey, '   (V', selected.version or '<error: no version>', ')',
                 white, '\n', selected.author or '<error: no author>',
                 '\n', selected.players       or '<error: no players>',
-                '\n', sizes[selected.size]   or '<error: no size>',
+                '\n', getMapSizeFromIndex(selected.size)   or '<error: no size>',
                 '\n', selected.downloads     or '<error: no downloads>',
             }, 308, 'left' )
             if textValues:getHeight()==90 then
@@ -36,10 +28,10 @@ return {
                 local temp = love.graphics.newTextBatch(font)
                 local headings = {grey}
                 for i, ps in ipairs{
-                    {'Name:', (selected.name or '<error: no name>')..' (V'..(selected.version or '<error: no version>')..')'},
+                    {'Name:', (selected.name or '<error: no name>')..'   (V'..(selected.version or '<error: no version>')..')'},
                     {'\nAuthor:', selected.author or '<error: no author>'},
                     {'\nPlayers:',selected.players or '<error: no players>'},
-                    {'\nSize:',   sizes[selected.size] or '<error: no size>'},
+                    {'\nSize:',   getMapSizeFromIndex(selected.size) or '<error: no size>'},
                     {'\nDownloads:', selected.downloads or '<error: no downloads>'},
                 } do
                     temp:setf(ps[2], 308, 'left')

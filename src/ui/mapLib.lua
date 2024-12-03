@@ -10,7 +10,7 @@ while true do
     }
 end
 ]]:start()
-local mapsData
+local mapsData, mapsDataUnfiltered
 local imageCache = {}
 local seton = love.graphics.newImage'graphics/map.png'
 local throbber = love.graphics.newImage'graphics/throbber.png'
@@ -64,13 +64,93 @@ function drawCached(filename, x, y, w, h)
     end
 end
 
+local filterData = {
+    sizes = {},
+    players = {},
+}
+
+local filtersSet = {sizes = {}, players = {}}
+
+local sizes = {
+    [-2] = '1.28 km',
+    [-1] = '2.56 km',
+    [0] = '5.12 km',
+    '10.24 km',
+    '20.48 km',
+    '40.96 km',
+    '81.92 km',
+}
+
+function getMapSizeFromIndex(index) return sizes[index] end
+
+local function updateFiltered()
+    if not mapsDataUnfiltered then mapsDataUnfiltered = mapsData end
+    mapsData = {}
+    for i, map in ipairs(mapsDataUnfiltered) do
+        if (not next(filtersSet.sizes) or filtersSet.sizes[map.size]) and (not next(filtersSet.players) or filtersSet.players[map.players]) then
+            table.insert(mapsData, map)
+        end
+    end
+    updateGridValues()
+end
+
 return {
     update = function(self, delta)
         frameCount = frameCount+1
         if not mapsData and love.thread.getChannel'mapLibData':peek() then
             mapsData = love.thread.getChannel'mapLibData':pop()
+
+            for i, map in ipairs(mapsData) do
+                filterData.players[map.players] = (filterData.players[map.players] or 0)+1
+                filterData.sizes[map.size] = (filterData.sizes[map.size] or 0)+1
+            end
+
+            local index = 0
+            for i=4, -2, -1 do
+                if filterData.sizes[i] then
+                    table.insert(self.objects, require'ui.elements.button'{
+                        text = sizes[i]:match'^(%d*)'..'k',
+                        inactive = true,
+                        posXN = 1,
+                        posYN = 0,
+                        offsetXN = -0.5-index,
+                        offsetXP = -86-index*5,
+                        offsetYN = 0.5,
+                        offsetYP = 35,
+                        type = 'icon',
+                        onPress = function(self, UI)
+                            filtersSet.sizes[i] = not filtersSet.sizes[i] or nil
+                            self.inactive = not filtersSet.sizes[i]
+                            updateFiltered()
+                        end,
+                    })
+                    index = index+1
+                end
+            end
+
+            index = 0
+            for i=1, 16 do
+                if filterData.players[i] then
+                    table.insert(self.objects, require'ui.elements.button'{
+                        text = i,
+                        inactive = true,
+                        posXN = 1,
+                        posYN = 0,
+                        offsetYN = 0.5+index,
+                        offsetYP = 100+index*5,
+                        offsetXN = -0.5,
+                        offsetXP = -28,
+                        type = 'icon',
+                        onPress = function(self, UI)
+                            filtersSet.players[i] = not filtersSet.players[i] or nil
+                            self.inactive = not filtersSet.players[i]
+                            updateFiltered()
+                        end,
+                    })
+                    index = index+1
+                end
+            end
             updateGridValues()
-            --local code, body, headers = require'https'.request'https://theloudproject.org:8081/maps/33edea18-e24d-4249-baab-4d3c590a4e09/marked_preview.jpg'
         end
         while love.thread.getChannel'mapLibData':peek() do
             local val = love.thread.getChannel'mapLibData':pop()

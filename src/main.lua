@@ -23,7 +23,7 @@ function love.resize(x,y)
     local w = windowData
     w.w, w.h = x, y
     w.scale = x/1152
-    w.scaleY = y/648
+    w.scaleY = y/677
     if uiMode.resize then
         uiMode:resize(w)
     end
