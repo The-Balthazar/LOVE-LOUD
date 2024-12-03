@@ -13,8 +13,9 @@ function love.conf(t)
     t.window.title = 'LÖVE LOUD'
     t.window.icon = 'graphics/icon/032-LOUD.png'
     t.window.resizable = true
-    t.window.width  = 1152
-    t.window.height = 677
+    baseWindowWidth, baseWindowHeight = 1152, 677
+    t.window.width  = baseWindowWidth
+    t.window.height = baseWindowHeight
     pcall(function()
         require'love.window'
         local width, height = love.window.getDesktopDimensions()

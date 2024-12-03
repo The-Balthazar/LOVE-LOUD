@@ -49,6 +49,9 @@ function network.getMapLibData()
         for key, str in mapJsonRaw:gmatch'(%b"")%s*:%s*(%b"")%s*,' do
             data[key:sub(2,-2)] = str:sub(2,-2)
         end
+        if data.image then
+            data.thumbnail = data.image:gsub('marked_preview', 'marked_preview_thumb', 1)  -- NOTE: Temporary until the value is fetched correctly
+        end
         table.insert(mapsData, data)
     end
     return mapsData

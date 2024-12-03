@@ -42,7 +42,7 @@ end
 
 updateGridValues()
 
-function drawCached(filename, x, y, w, h)
+function drawCached(filename, x, y, w, h, drawthrough)
     if filename and not imageCache[filename] then
         if love.filesystem.getInfo('temp/'..filename) then
             if frameCount~=lastFetch then
@@ -57,7 +57,9 @@ function drawCached(filename, x, y, w, h)
     if filename and type(imageCache[filename])=='userdata' then
         love.graphics.draw(imageCache[filename], x, y, 0, w/imageCache[filename]:getWidth(), h/imageCache[filename]:getHeight())
     else
-        love.graphics.draw(seton, x, y, 0, w/1024, h/1024)
+        if not drawthrough then
+            love.graphics.draw(seton, x, y, 0, w/1024, h/1024)
+        end
         love.graphics.setColor(0, 0, 0)
         love.graphics.draw(throbber, x+w/2, y+h/2, love.timer.getTime()*3, 1, 1, 20, 20)
         love.graphics.setColor(1, 1, 1)
@@ -74,7 +76,7 @@ local filtersSet = {sizes = {}, players = {}}
 local sizes = {
     [-2] = '1.28 km',
     [-1] = '2.56 km',
-    [0] = '5.12 km',
+    [0]  = '5.12 km',
     '10.24 km',
     '20.48 km',
     '40.96 km',
@@ -94,64 +96,69 @@ local function updateFiltered()
     updateGridValues()
 end
 
+local function getAndApplyLibraryData(self)
+    if not mapsData and love.thread.getChannel'mapLibData':peek() then
+        mapsData = love.thread.getChannel'mapLibData':pop()
+
+        for i, map in ipairs(mapsData) do
+            filterData.players[map.players] = (filterData.players[map.players] or 0)+1
+            filterData.sizes[map.size] = (filterData.sizes[map.size] or 0)+1
+        end
+
+        local index = 0
+        for i=4, -2, -1 do
+            if filterData.sizes[i] then
+                table.insert(self.objects, require'ui.elements.button'{
+                    text = sizes[i]:match'^(%d*)'..'k',
+                    inactive = true,
+                    posXN = 1,
+                    posYN = 0,
+                    offsetXN = -0.5-index,
+                    offsetXP = -86-index*5,
+                    offsetYN = 0.5,
+                    offsetYP = 35,
+                    type = 'icon',
+                    onPress = function(self, UI)
+                        filtersSet.sizes[i] = not filtersSet.sizes[i] or nil
+                        self.inactive = not filtersSet.sizes[i]
+                        updateFiltered()
+                    end,
+                })
+                index = index+1
+            end
+        end
+
+        index = 0
+        for i=1, 16 do
+            if filterData.players[i] then
+                table.insert(self.objects, require'ui.elements.button'{
+                    text = i,
+                    inactive = true,
+                    posXN = 1,
+                    posYN = 0,
+                    offsetYN = 0.5+index,
+                    offsetYP = 100+index*5,
+                    offsetXN = -0.5,
+                    offsetXP = -28,
+                    type = 'icon',
+                    onPress = function(self, UI)
+                        filtersSet.players[i] = not filtersSet.players[i] or nil
+                        self.inactive = not filtersSet.players[i]
+                        updateFiltered()
+                    end,
+                })
+                index = index+1
+            end
+        end
+        updateGridValues()
+        --local code, body, headers = require'https'.request'https://theloudproject.org:8081/maps/33edea18-e24d-4249-baab-4d3c590a4e09/marked_preview.jpg'
+    end
+end
+
 return {
     update = function(self, delta)
         frameCount = frameCount+1
-        if not mapsData and love.thread.getChannel'mapLibData':peek() then
-            mapsData = love.thread.getChannel'mapLibData':pop()
-
-            for i, map in ipairs(mapsData) do
-                filterData.players[map.players] = (filterData.players[map.players] or 0)+1
-                filterData.sizes[map.size] = (filterData.sizes[map.size] or 0)+1
-            end
-
-            local index = 0
-            for i=4, -2, -1 do
-                if filterData.sizes[i] then
-                    table.insert(self.objects, require'ui.elements.button'{
-                        text = sizes[i]:match'^(%d*)'..'k',
-                        inactive = true,
-                        posXN = 1,
-                        posYN = 0,
-                        offsetXN = -0.5-index,
-                        offsetXP = -86-index*5,
-                        offsetYN = 0.5,
-                        offsetYP = 35,
-                        type = 'icon',
-                        onPress = function(self, UI)
-                            filtersSet.sizes[i] = not filtersSet.sizes[i] or nil
-                            self.inactive = not filtersSet.sizes[i]
-                            updateFiltered()
-                        end,
-                    })
-                    index = index+1
-                end
-            end
-
-            index = 0
-            for i=1, 16 do
-                if filterData.players[i] then
-                    table.insert(self.objects, require'ui.elements.button'{
-                        text = i,
-                        inactive = true,
-                        posXN = 1,
-                        posYN = 0,
-                        offsetYN = 0.5+index,
-                        offsetYP = 100+index*5,
-                        offsetXN = -0.5,
-                        offsetXP = -28,
-                        type = 'icon',
-                        onPress = function(self, UI)
-                            filtersSet.players[i] = not filtersSet.players[i] or nil
-                            self.inactive = not filtersSet.players[i]
-                            updateFiltered()
-                        end,
-                    })
-                    index = index+1
-                end
-            end
-            updateGridValues()
-        end
+        getAndApplyLibraryData(self)
         while love.thread.getChannel'mapLibData':peek() do
             local val = love.thread.getChannel'mapLibData':pop()
             if type(val)=='table' and imageCache[val[1]] then
@@ -169,7 +176,7 @@ return {
             for x=0, entriesPerRow-1 do
                 i = i+1
                 if not mapsData or mapsData[i] then
-                    drawCached(mapsData and mapsData[i].image, (86+x*110)*w.scale, (100+y*110)*w.scale, (100)*w.scale, (100)*w.scale)
+                    drawCached(mapsData and (mapsData[i].thumbnail or mapsData[i].image), (86+x*110)*w.scale, (100+y*110)*w.scale, (100)*w.scale, (100)*w.scale)
                     if y==mouseHoverY and x==mouseHoverX then
                         love.graphics.rectangle('line', (86+x*110)*w.scale, (100+y*110)*w.scale, (100)*w.scale, (100)*w.scale, w.scale/2, w.scale/2, 1)
                     end

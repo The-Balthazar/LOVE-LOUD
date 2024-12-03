@@ -1,6 +1,6 @@
 local selected
 local textHeadings, textValues, textDesc
-local white, grey, clear = {1,1,1}, {0.5, 0.5, 0.5}, {1,1,1,0}
+local white, grey = {1,1,1}, {0.5, 0.5, 0.5}
 
 return {
     set = function(self, data)
@@ -41,7 +41,12 @@ return {
                 textHeadings:setf(headings, 162, 'right' )
             end
             textDesc:setf({
-                white, ('\n'):rep(textValues:getHeight()/18+1), selected.description and selected.description:gsub('\\r', '\r'):gsub('\\n', '\n') or '<error: no description>',
+                white, ('\n'):rep(textValues:getHeight()/18+1),
+                selected.description and selected.description
+                    :gsub('\\r', '\r')
+                    :gsub('\\n', '\n')
+                    :gsub('\\t', '\t')
+                or '<error: no description>',
             }, 480, 'left' )
 
             return true
@@ -51,12 +56,34 @@ return {
         require'ui.mapLib':update(delta) -- fetch any incoming data for drawCached
     end,
     draw = function(self, w)
-        require'ui.intro':draw(w)
         if not selected then return end
-        drawCached(selected.image,      575*w.scale, 100*w.scale, 540*w.scale, 540*w.scale)
-        love.graphics.draw(textHeadings, 86*w.scale, 320*w.scale, 0,  w.scale,     w.scale)
-        love.graphics.draw(textValues,  258*w.scale, 320*w.scale, 0,  w.scale,     w.scale)
-        love.graphics.draw(textDesc,     86*w.scale, 320*w.scale, 0,  w.scale,     w.scale)
+
+        local textOffsetY = 320*w.scale
+        local textSpace = w.h-textOffsetY
+        local textOverflowing = (textDesc:getHeight()*w.scale)>textSpace
+
+        local imageXpos, imageYpos, imageSize
+        if w.scaleY>0.75 then
+            imageXpos, imageYpos, imageSize = 575*w.scale, 100*w.scale, 540*math.min(w.scale, w.scaleY)
+            if textOverflowing then
+                textOffsetY = 50*w.scale
+                imageYpos = textOffsetY
+            else
+                require'ui.intro':draw(w)
+            end
+        else
+            imageYpos = 0
+            imageSize = baseWindowHeight*w.scaleY
+            imageXpos = baseWindowWidth*w.scale-imageSize
+            textOffsetY = 10
+        end
+
+        if selected.thumbnail then drawCached(selected.thumbnail, imageXpos, imageYpos, imageSize, imageSize) end
+        drawCached(selected.image,      imageXpos, imageYpos, imageSize, imageSize, selected.thumbnail)
+
+        love.graphics.draw(textHeadings,248*w.scale, textOffsetY, 0, w.scale, w.scale, 162)
+        love.graphics.draw(textValues,  258*w.scale, textOffsetY, 0, w.scale, w.scale)
+        love.graphics.draw(textDesc,     86*w.scale, textOffsetY, 0, w.scale, w.scale)
     end,
     objects = {
         require'ui.elements.button'{

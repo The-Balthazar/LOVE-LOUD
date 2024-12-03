@@ -22,8 +22,8 @@ function getWindowData() return windowData end
 function love.resize(x,y)
     local w = windowData
     w.w, w.h = x, y
-    w.scale = x/1152
-    w.scaleY = y/677
+    w.scale = x/baseWindowWidth
+    w.scaleY = y/baseWindowHeight
     if uiMode.resize then
         uiMode:resize(w)
     end
