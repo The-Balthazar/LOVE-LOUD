@@ -163,7 +163,7 @@ return {
         end
     end,
     draw = function(self, w)
-        require'ui.intro'.draw(self)
+        require'ui.intro':draw(w)
         local i = scroll*entriesPerRow
         for y=0, math.floor(entriesY-1) do
             for x=0, entriesPerRow-1 do

@@ -48,10 +48,10 @@ return {
         end
     end,
     update = function(self, delta)
-        require'ui.mapLib'.update(0) -- fetch any incoming data for drawCached
+        require'ui.mapLib':update(delta) -- fetch any incoming data for drawCached
     end,
     draw = function(self, w)
-        require'ui.intro'.draw(self)
+        require'ui.intro':draw(w)
         if not selected then return end
         drawCached(selected.image,      575*w.scale, 100*w.scale, 540*w.scale, 540*w.scale)
         love.graphics.draw(textHeadings, 86*w.scale, 320*w.scale, 0,  w.scale,     w.scale)
