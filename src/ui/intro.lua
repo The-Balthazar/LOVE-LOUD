@@ -30,14 +30,14 @@ return {
             end
         end
     end,
-    draw = function(self)
+    draw = function(self, w, yOffset)
         local scale = love.graphics.getWidth()/1920
-        love.graphics.draw(bg, 0, 0, 0, scale)
+        love.graphics.draw(bg, 0, yOffset or 0, 0, scale)
         love.graphics.setColor(1,1,1,seraAlpha)
-        love.graphics.draw(bg2, 0, 0, 0, scale)
+        love.graphics.draw(bg2, 0, yOffset or 0, 0, scale)
         love.graphics.setColor(1,1,1,1)
         local x = math.lerp(love.graphics.getWidth()/2, logoX*scale, math.easeOutBack(transition, 2.7))
-        local y = math.lerp(love.graphics.getHeight()/2, logoY*scale, math.easeOutBack(transition, 2.7))
+        local y = math.lerp(love.graphics.getHeight()/2, logoY*scale, math.easeOutBack(transition, 2.7))+(yOffset or 0)
         local lScale = math.lerp(scale, logoS*scale, math.easeBothElastic(transition, 2.7))
         love.graphics.draw(logo_shadow, x, y, 0, lScale, lScale, 821, 195)
         love.graphics.draw(logo_shadow, x, y, 0, lScale, lScale, 821, 195)

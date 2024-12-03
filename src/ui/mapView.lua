@@ -66,12 +66,14 @@ return {
         if w.scaleY>0.75 then
             imageXpos, imageYpos, imageSize = 575*w.scale, 100*w.scale, 540*math.min(w.scale, w.scaleY)
             if textOverflowing then
+                require'ui.intro':draw(w, -270)
                 textOffsetY = 50*w.scale
                 imageYpos = textOffsetY
             else
                 require'ui.intro':draw(w)
             end
         else
+            require'ui.intro':draw(w, -310)
             imageYpos = 0
             imageSize = baseWindowHeight*w.scaleY
             imageXpos = baseWindowWidth*w.scale-imageSize
