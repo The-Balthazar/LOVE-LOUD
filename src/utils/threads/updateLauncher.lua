@@ -16,7 +16,7 @@ if not (update_id and zipball_url) then
     return
 end
 
-if love.filesystem.read('string', 'version')==update_id and false then
+if love.filesystem.read('string', 'version')==update_id then
     feedback:push('LÖVE-LOUD client is up to date: '..tag_name:sub(2, -2))
     return
 end
