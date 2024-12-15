@@ -8,7 +8,11 @@ function setUIMode(mode)
 end
 function getUIMode() return uiMode end
 
-function love.load()
+function love.load(arg, argUnparsed, updated)
+    if not updated and loadUpdatedLauncher(arg, argUnparsed) then
+        return
+    end
+    love.thread.newThread'utils/threads/updateLauncher.lua':start()
     love.resize(love.graphics.getDimensions())
     if love.filesystem.isFused() then
         assert(love.filesystem.mountFullPath(love.filesystem.getSourceBaseDirectory(), 'SCFA', 'readwrite', true), "Failed to mount game folder with write permissions.")
