@@ -151,7 +151,6 @@ local function getAndApplyLibraryData(self)
             end
         end
         updateGridValues()
-        --local code, body, headers = require'https'.request'https://theloudproject.org:8081/maps/33edea18-e24d-4249-baab-4d3c590a4e09/marked_preview.jpg'
     end
 end
 

@@ -5,6 +5,7 @@ local throbber = love.graphics.newImage'graphics/throbber.png'
 local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
 local downloading = {}
 local outOfDate, localPath, scenarioInfoPath
+require'utils.filesystem'
 
 return {
     set = function(self, data)
@@ -53,8 +54,8 @@ return {
                 or '<error: no description>',
             }, 480, 'left' )
             localPath = ('%susermaps/%s'):format(writePath, selected.identifier)
-            scenarioInfoPath = ('%susermaps/%s/%s_scenario.lua'):format(writePath, selected.identifier, selected.identifier)
-            if love.filesystem.getInfo(scenarioInfoPath) then
+            scenarioInfoPath = findMapScenarioLua(localPath)
+            if scenarioInfoPath then
                 scenarioInfo = love.filesystem.read(scenarioInfoPath)
                 local localVersion = (scenarioInfo:match('map_version%s*%=%s*([^,%s]*)%s*,') or '')
                 outOfDate = tostring(selected.version):gsub('["\']', '')~=localVersion:gsub('["\']', '')
@@ -123,7 +124,7 @@ return {
             type = 'bigicon',
             onPress = function(self, UI)
                 if self.inactive then return end
-                love.filesystem.remove(scenarioInfoPath)
+                if scenarioInfoPath then love.filesystem.remove(scenarioInfoPath) end
                 love.thread.getChannel'getMap':push(selected)
                 love.thread.newThread'utils/threads/getMap.lua':start()
                 downloading[selected.identifier] = true
@@ -136,7 +137,7 @@ return {
                     self.inactive = nil
                     self.icon = nil
                     self.text = 'Update'
-                elseif love.filesystem.getInfo(scenarioInfoPath) then
+                elseif scenarioInfoPath and love.filesystem.getInfo(scenarioInfoPath) or findMapScenarioLua(localPath) then
                     self.inactive = true
                     self.icon = nil
                     self.text = 'Installed'
@@ -161,17 +162,16 @@ return {
                 if self.inactive then return end
                 downloading[selected.identifier] = nil
                 outOfDate = nil
-                require'utils.filesystem'
                 forEachFile(localPath, function(path, name)
                     love.filesystem.remove(path..'/'..(name or ''))
                 end)
                 love.filesystem.remove(localPath)
             end,
             update = function(self, UI, delta)
-                self.inactive = not love.filesystem.getInfo(scenarioInfoPath)
+                self.inactive = not (scenarioInfoPath and love.filesystem.getInfo(scenarioInfoPath) or findMapScenarioLua(localPath))
             end,
             showIf = function(self, UI)
-                return love.filesystem.getInfo(scenarioInfoPath)
+                return (scenarioInfoPath and love.filesystem.getInfo(scenarioInfoPath) or findMapScenarioLua(localPath))
             end,
         },
     },

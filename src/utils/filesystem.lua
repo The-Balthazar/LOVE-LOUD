@@ -42,3 +42,12 @@ function forEachFile(path, fun)
         end
     end
 end
+
+function findMapScenarioLua(path)
+    if not path then return end
+    for i, name in ipairs(love.filesystem.getDirectoryItems(path)) do
+        if name:match'_scenario.lua$' then
+            return path..'/'..name
+        end
+    end
+end
