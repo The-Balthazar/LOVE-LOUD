@@ -15,6 +15,7 @@ function updateLoudDataPath()
 end
 
 local folderIcon = love.graphics.newImage'graphics/folder.png'
+local githubIcon = love.graphics.newImage'graphics/github.png'
 
 menuActiveTab = 'config'
 local buttonUpColour = {0,22/255,38/255}
@@ -368,7 +369,7 @@ return {
             posXN = 1,
             posYN = 1,
             offsetXN = -1.5,
-            offsetXP = -35,
+            offsetXP = -45,
             offsetYN = -1.5,
             offsetYP = -55,
             type = 'pencil',
@@ -390,7 +391,7 @@ return {
             posXN = 1,
             posYN = 1,
             offsetXN = -1.5,
-            offsetXP = -35,
+            offsetXP = -45,
             offsetYN = -0.5,
             offsetYP = -50,
             type = 'pencil',
@@ -415,14 +416,14 @@ return {
             offsetXP = -50,
             offsetYN = -1.5,
             offsetYP = -55,
-            type = 'tab',
+            type = 'smollink',
             icon = love.graphics.newImage'graphics/onedrive.png',
             onPress = function(self, UI)
                 love.system.openURL('https://onedrive.live.com/?authkey=!APAfOJusxNHJJWM&id=730910080073E6E6!4068&cid=730910080073E6E6')
             end,
             onHover = function(self, UI)
                 if self.mouseOver then
-                    self.text = 'live.com ...'
+                    self.text = 'live.com...'
                 else
                     self.text = 'OneDrive'
                 end
@@ -441,6 +442,50 @@ return {
             type = 'pencil2',
             onPress = function(self, UI)
                 love.thread.newThread'utils/threads/generateCRC.lua':start()
+            end,
+        },
+        require'ui.elements.button'{
+            showIf = function(self, UI, delta) return menuActiveTab=='dev' end,
+            text = 'LOUD source code',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -0.5,
+            offsetXP = -50,
+            offsetYN = -1.5,
+            offsetYP = -55,
+            type = 'pencil2',
+            icon = githubIcon,
+            onPress = function(self, UI)
+                love.system.openURL('https://github.com/LOUD-Project/Git-LOUD')
+            end,
+            onHover = function(self, UI)
+                if self.mouseOver then
+                    self.text = 'github.com/LOUD-Project'
+                else
+                    self.text = 'LOUD source code'
+                end
+            end,
+        },
+        require'ui.elements.button'{
+            showIf = function(self, UI, delta) return menuActiveTab=='dev' end,
+            text = 'LOVE-LOUD source code',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -0.5,
+            offsetXP = -50,
+            offsetYN = -0.5,
+            offsetYP = -50,
+            type = 'pencil2',
+            icon = githubIcon,
+            onPress = function(self, UI)
+                love.system.openURL('https://github.com/The-Balthazar/LOVE-LOUD')
+            end,
+            onHover = function(self, UI)
+                if self.mouseOver then
+                    self.text = 'github.com/.../LOVE-LOUD'
+                else
+                    self.text = 'LOVE-LOUD source code'
+                end
             end,
         },
         --[[require'ui.elements.button'{

@@ -8,7 +8,7 @@ local types = {
         height = 60,
     },
     pencil = {
-        width = 200,
+        width = 195,
         height = 30,
     },
     pencil2 = {
@@ -25,6 +25,10 @@ local types = {
     },
     tab = {
         width = 100,
+        height = 30,
+    },
+    smollink = {
+        width = 90,
         height = 30,
     },
 }
