@@ -1,5 +1,4 @@
-userConfig = loadSaveFileData'userConfig' or {}
-local uiMode = require'ui.intro'
+local uiMode
 
 function setUIMode(mode)
     uiMode = mode
@@ -9,6 +8,8 @@ end
 function getUIMode() return uiMode end
 
 function love.load(arg, argUnparsed, updated)
+    userConfig = loadSaveFileData'userConfig' or {}
+    uiMode = require'ui.intro'
     if not updated and loadUpdatedLauncher(arg, argUnparsed) then
         return
     end
