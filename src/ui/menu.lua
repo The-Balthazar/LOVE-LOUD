@@ -3,7 +3,7 @@ local log = {}
 local files = {}
 local done = 0
 local todo = 0
-local updating, launching
+local updating, launching, allStarted
 
 local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
 local exeFound = love.filesystem.getInfo('SCFA/bin/SupremeCommander.exe')
@@ -24,7 +24,9 @@ return {
         while feedback:peek() do
             local msg = feedback:pop()
             local msgType = type(msg)
-            if msgType=='number' then
+            if msg=='allOpperationsStarted' then
+                allStarted = true
+            elseif msgType=='number' then
                 todo=todo+1
             elseif msgType=='string' then
                 table.insert(log, msg)
@@ -38,12 +40,13 @@ return {
                     table.removeByValue(files, file)
                     files[file]=nil
                     done=done+1
-                    if todo==done then
-                        updating = false
-                        feedback:push'Finished updating'
-                    end
                 end
             end
+        end
+        if updating and allStarted and todo==done then
+            updating = false
+            allStarted = nil
+            feedback:push'Finished updating'
         end
     end,
     objects = {

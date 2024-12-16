@@ -84,3 +84,5 @@ for folder in pairs(checkEmpty) do
     end
     removeFolderIfEmpty(folder)
 end
+
+feedback:push'allOpperationsStarted'
