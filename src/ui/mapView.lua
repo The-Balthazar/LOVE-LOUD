@@ -3,8 +3,7 @@ local textHeadings, textValues, textDesc
 local white, grey = {1,1,1}, {0.5, 0.5, 0.5}
 local throbber = love.graphics.newImage'graphics/throbber.png'
 local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
-local downloading = {}
-local outOfDate, localPath, scenarioInfoPath
+local outOfDate
 require'utils.filesystem'
 
 return {
@@ -53,10 +52,10 @@ return {
                     :gsub('\\t', '\t')
                 or '<error: no description>',
             }, 480, 'left' )
-            localPath = ('%susermaps/%s'):format(writePath, selected.identifier)
-            scenarioInfoPath = findMapScenarioLua(localPath)
-            if scenarioInfoPath then
-                scenarioInfo = love.filesystem.read(scenarioInfoPath)
+            selected.localPath = ('%susermaps/%s'):format(writePath, selected.identifier)
+            selected.localScenarioPath = findMapScenarioLua(selected.localPath)
+            if selected.localScenarioPath then
+                scenarioInfo = love.filesystem.read(selected.localScenarioPath)
                 local localVersion = (scenarioInfo:match('map_version%s*%=%s*([^,%s]*)%s*,') or '')
                 outOfDate = tostring(selected.version):gsub('["\']', '')~=localVersion:gsub('["\']', '')
             end
@@ -124,10 +123,10 @@ return {
             type = 'bigicon',
             onPress = function(self, UI)
                 if self.inactive then return end
-                if scenarioInfoPath then love.filesystem.remove(scenarioInfoPath) end
+                if selected.localScenarioPath then love.filesystem.remove(selected.localScenarioPath) end
                 love.thread.getChannel'getMap':push(selected)
                 love.thread.newThread'utils/threads/getMap.lua':start()
-                downloading[selected.identifier] = true
+                markAsDownloading(selected.identifier, true)
                 selected.downloads = selected.downloads+1
                 self.inactive = true
                 outOfDate = nil
@@ -137,13 +136,13 @@ return {
                     self.inactive = nil
                     self.icon = nil
                     self.text = 'Update'
-                elseif scenarioInfoPath and love.filesystem.getInfo(scenarioInfoPath) or findMapScenarioLua(localPath) then
+                elseif selected.localScenarioPath and love.filesystem.getInfo(selected.localScenarioPath) or findMapScenarioLua(selected.localPath) then
                     self.inactive = true
                     self.icon = nil
                     self.text = 'Installed'
                 else
-                    self.inactive = downloading[selected.identifier]
-                    self.icon = downloading[selected.identifier] and throbber or nil
+                    self.inactive = isDownloading(selected.identifier)
+                    self.icon = isDownloading(selected.identifier) and throbber or nil
                     self.text = (not self.icon) and 'Download' or nil
                 end
                 self.iconAngle = love.timer.getTime()
@@ -160,18 +159,18 @@ return {
             type = 'bigicon',
             onPress = function(self, UI)
                 if self.inactive then return end
-                downloading[selected.identifier] = nil
+                markAsDownloading(selected.identifier, nil)
                 outOfDate = nil
-                forEachFile(localPath, function(path, name)
+                forEachFile(selected.localPath, function(path, name)
                     love.filesystem.remove(path..'/'..(name or ''))
                 end)
-                love.filesystem.remove(localPath)
+                love.filesystem.remove(selected.localPath)
             end,
             update = function(self, UI, delta)
-                self.inactive = not (scenarioInfoPath and love.filesystem.getInfo(scenarioInfoPath) or findMapScenarioLua(localPath))
+                self.inactive = not (selected.localScenarioPath and love.filesystem.getInfo(selected.localScenarioPath) or findMapScenarioLua(selected.localPath))
             end,
             showIf = function(self, UI)
-                return (scenarioInfoPath and love.filesystem.getInfo(scenarioInfoPath) or findMapScenarioLua(localPath))
+                return (selected.localScenarioPath and love.filesystem.getInfo(selected.localScenarioPath) or findMapScenarioLua(selected.localPath))
             end,
         },
     },

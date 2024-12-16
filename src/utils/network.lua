@@ -2,6 +2,7 @@ local ftp = require'socket.ftp' --https://lunarmodules.github.io/luasocket/ftp.h
 local ltn12 = require'ltn12'
 local feedback = love.thread.getChannel'log'
 local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
+require'utils.filesystem'
 
 local network = {}
 
@@ -52,6 +53,7 @@ function network.getMapLibData()
         if data.image then
             data.thumbnail = data.image:gsub('marked_preview', 'marked_preview_thumb', 1)  -- NOTE: Temporary until the value is fetched correctly
         end
+        data.localScenarioPath = data.identifier and findMapScenarioLua(writePath..'usermaps/'..data.identifier)
         table.insert(mapsData, data)
     end
     return mapsData
@@ -62,8 +64,6 @@ function network.getMapLibFile(file)
     if code~=200 then return file, 'Communication error' end
     return file, body
 end
-
-local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
 
 function network.getMap(data)
     feedback:push(1)
@@ -82,7 +82,6 @@ function network.getMap(data)
     local mountPath = data.file:gsub('/', '-')
     love.filesystem.mount(SCDWritePath, mountPath)
 
-    require'utils.filesystem'
     forEachFile(mountPath, function(path, name)
         local inputPath = path..'/'..(name or '')
         local outputPath = writePath..'usermaps'..path:sub(#mountPath+1)..'/'..(name or '')

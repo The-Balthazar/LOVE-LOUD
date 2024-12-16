@@ -14,6 +14,8 @@ local mapsData, mapsDataUnfiltered
 local imageCache = {}
 local seton = love.graphics.newImage'graphics/map.png'
 local throbber = love.graphics.newImage'graphics/throbber.png'
+local folderIcon = love.graphics.newImage'graphics/folder.png'
+require'utils.filesystem'
 
 local scroll = 0
 local entriesPerRow = 9
@@ -66,12 +68,15 @@ function drawCached(filename, x, y, w, h, drawthrough)
     end
 end
 
+local downloading = {}
+
 local filterData = {
     sizes = {},
     players = {},
 }
 
 local filtersSet = {sizes = {}, players = {}}
+local filterInstalled = true
 
 local sizes = {
     [-2] = '1.28 km',
@@ -85,11 +90,17 @@ local sizes = {
 
 function getMapSizeFromIndex(index) return sizes[index] end
 
+function isDownloading(id) return downloading[id] end
+function markAsDownloading(id, val) downloading[id] = val end
+
 local function updateFiltered()
     if not mapsDataUnfiltered then mapsDataUnfiltered = mapsData end
     mapsData = {}
     for i, map in ipairs(mapsDataUnfiltered) do
-        if (not next(filtersSet.sizes) or filtersSet.sizes[map.size]) and (not next(filtersSet.players) or filtersSet.players[map.players]) then
+        if  (not next(filtersSet.sizes) or filtersSet.sizes[map.size])
+        and (not next(filtersSet.players) or filtersSet.players[map.players])
+        and (filterInstalled or not (map.localScenarioPath and love.filesystem.getInfo(map.localScenarioPath)))
+        then
             table.insert(mapsData, map)
         end
     end
@@ -150,6 +161,23 @@ local function getAndApplyLibraryData(self)
                 index = index+1
             end
         end
+
+        table.insert(self.objects, require'ui.elements.button'{
+            text = 'Installed',
+            posXN = 0,
+            posYN = 0,
+            offsetXN = 0.5,
+            offsetXP = 86,
+            offsetYN = 0.5,
+            offsetYP = 35,
+            type = 'smollink',
+            onPress = function(self, UI)
+                filterInstalled = not filterInstalled
+                self.inactive = not filterInstalled
+                updateFiltered()
+            end,
+        })
+        
         updateGridValues()
     end
 end
@@ -178,6 +206,24 @@ return {
                     drawCached(mapsData and (mapsData[i].thumbnail or mapsData[i].image), (86+x*110)*w.scale, (100+y*110)*w.scale, (100)*w.scale, (100)*w.scale)
                     if y==mouseHoverY and x==mouseHoverX then
                         love.graphics.rectangle('line', (86+x*110)*w.scale, (100+y*110)*w.scale, (100)*w.scale, (100)*w.scale, w.scale/2, w.scale/2, 1)
+                    end
+                    if mapsData then
+                        if mapsData[i].localScenarioPath and love.filesystem.getInfo(mapsData[i].localScenarioPath) then
+                            love.graphics.draw(folderIcon, (86+x*110)*w.scale, (100+y*110)*w.scale, 0, w.scale, w.scale, 10, -80)
+                        elseif isDownloading(mapsData[i].identifier) then
+                            love.graphics.setColor(0,0,0)
+                            for xx=-2, 2, 2 do
+                                for yy=-2, 2, 2 do
+                                    love.graphics.draw(throbber, (xx+91+x*110)*w.scale, (yy+195+y*110)*w.scale, love.timer.getTime()*2, w.scale/2, w.scale/2, 20, 20)
+                                end
+                            end
+                            love.graphics.setColor(1,1,1)
+                            love.graphics.draw(throbber, (91+x*110)*w.scale, (195+y*110)*w.scale, love.timer.getTime()*2, w.scale/2, w.scale/2, 20, 20)
+                            mapsData[i].localScenarioPath = findMapScenarioLua(mapsData[i].localPath)
+                            if mapsData[i].localScenarioPath then
+                                markAsDownloading(mapsData[i].identifier, nil)
+                            end
+                        end
                     end
                 end
             end
