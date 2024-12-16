@@ -71,7 +71,7 @@ return {
             end,
             update = function(self, UI, delta)
                 if exeFound then
-                    self.inactive = updating
+                    self.inactive = updating or ( (#files+todo+done)>0 and todo~=done )
                 end
             end,
         },
@@ -469,7 +469,7 @@ return {
             love.graphics.printf(text, 576*scale, (337+(i-1)*20)*scale, 556, 'right', 0, scale, scale)
         end
         ]]
-        if updating~=nil then
+        if updating~=nil or (#files+todo+done)>0 then
             love.graphics.printf(('Files downloading: %d   Queued: %d   Finished: %d'):format(#files, todo, done), 20*scale, 337*scale, 556, 'right', 0, scale, scale)
         end
         for i, text in ipairs(files) do

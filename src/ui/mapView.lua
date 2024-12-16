@@ -1,6 +1,10 @@
 local selected
 local textHeadings, textValues, textDesc
 local white, grey = {1,1,1}, {0.5, 0.5, 0.5}
+local throbber = love.graphics.newImage'graphics/throbber.png'
+local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
+local downloading = {}
+local outOfDate, localPath, scenarioInfoPath
 
 return {
     set = function(self, data)
@@ -48,6 +52,13 @@ return {
                     :gsub('\\t', '\t')
                 or '<error: no description>',
             }, 480, 'left' )
+            localPath = ('%susermaps/%s'):format(writePath, selected.identifier)
+            scenarioInfoPath = ('%susermaps/%s/%s_scenario.lua'):format(writePath, selected.identifier, selected.identifier)
+            if love.filesystem.getInfo(scenarioInfoPath) then
+                scenarioInfo = love.filesystem.read(scenarioInfoPath)
+                local localVersion = (scenarioInfo:match('map_version%s*%=%s*([^,%s]*)%s*,') or '')
+                outOfDate = tostring(selected.version):gsub('["\']', '')~=localVersion:gsub('["\']', '')
+            end
 
             return true
         end
@@ -99,6 +110,68 @@ return {
             type = 'bigicon',
             onPress = function(self, UI)
                 UI:goBack()
+            end,
+        },
+        require'ui.elements.button'{
+            text = 'Download',
+            posXN = 0,
+            posYN = 1,
+            offsetXN = 0.5,
+            offsetXP = 10,
+            offsetYN = -1.5,
+            offsetYP = -20,
+            type = 'bigicon',
+            onPress = function(self, UI)
+                if self.inactive then return end
+                love.filesystem.remove(scenarioInfoPath)
+                love.thread.getChannel'getMap':push(selected)
+                love.thread.newThread'utils/threads/getMap.lua':start()
+                downloading[selected.identifier] = true
+                selected.downloads = selected.downloads+1
+                self.inactive = true
+                outOfDate = nil
+            end,
+            update = function(self, UI, delta)
+                if outOfDate then
+                    self.inactive = nil
+                    self.icon = nil
+                    self.text = 'Update'
+                elseif love.filesystem.getInfo(scenarioInfoPath) then
+                    self.inactive = true
+                    self.icon = nil
+                    self.text = 'Installed'
+                else
+                    self.inactive = downloading[selected.identifier]
+                    self.icon = downloading[selected.identifier] and throbber or nil
+                    self.text = (not self.icon) and 'Download' or nil
+                end
+                self.iconAngle = love.timer.getTime()
+            end,
+        },
+        require'ui.elements.button'{
+            text = 'Uninstall',
+            posXN = 0,
+            posYN = 1,
+            offsetXN = 0.5,
+            offsetXP = 10,
+            offsetYN = -2.5,
+            offsetYP = -30,
+            type = 'bigicon',
+            onPress = function(self, UI)
+                if self.inactive then return end
+                downloading[selected.identifier] = nil
+                outOfDate = nil
+                require'utils.filesystem'
+                forEachFile(localPath, function(path, name)
+                    love.filesystem.remove(path..'/'..(name or ''))
+                end)
+                love.filesystem.remove(localPath)
+            end,
+            update = function(self, UI, delta)
+                self.inactive = not love.filesystem.getInfo(scenarioInfoPath)
+            end,
+            showIf = function(self, UI)
+                return love.filesystem.getInfo(scenarioInfoPath)
             end,
         },
     },

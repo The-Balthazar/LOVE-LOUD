@@ -63,4 +63,39 @@ function network.getMapLibFile(file)
     return file, body
 end
 
+local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
+
+function network.getMap(data)
+    feedback:push(1)
+    feedback:push{data.name, 'downloading'}
+    local code, body, headers = require'https'.request('https://theloudproject.org:8081/'..data.file)
+    if code~=200 then
+        feedback:push{data.name, 'done'}
+        feedback:push(('%s map download failed: code %s: %s'):format(data.name, tostring(code), body))
+        return
+    end
+    feedback:push{data.name, 'writing'}
+    local path, filename = data.file:match'(.*)(/[^/]*)'
+    love.filesystem.createDirectory('temp/'..path)
+    local SCDWritePath = 'temp/'..data.file
+    love.filesystem.write(SCDWritePath, body)
+    local mountPath = data.file:gsub('/', '-')
+    love.filesystem.mount(SCDWritePath, mountPath)
+
+    require'utils.filesystem'
+    forEachFile(mountPath, function(path, name)
+        local inputPath = path..'/'..(name or '')
+        local outputPath = writePath..'usermaps'..path:sub(#mountPath+1)..'/'..(name or '')
+        if not name then
+            love.filesystem.createDirectory(outputPath)
+            return
+        end
+        love.filesystem.write(outputPath, (love.filesystem.read(inputPath)))
+    end)
+    love.filesystem.unmount(SCDWritePath)
+    love.filesystem.remove(SCDWritePath)
+    feedback:push{data.name, 'done'}
+    feedback:push(('Map "%s" downloaded.'):format(data.name))
+end
+
 return network
