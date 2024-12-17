@@ -119,7 +119,18 @@ function love.wheelmoved(x, y)
 end
 
 function love.keypressed(key, ...)
+    if uiMode.keypressed then
+        if uiMode:keypressed(key, ...) then
+            return
+        end
+    end
     if key=='escape' and uiMode.goBack then
         uiMode:goBack()
+    end
+end
+
+function love.textinput(...)
+    if uiMode.textinput then
+        uiMode:textinput(...)
     end
 end

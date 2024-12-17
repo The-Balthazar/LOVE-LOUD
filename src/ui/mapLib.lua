@@ -93,19 +93,57 @@ function getMapSizeFromIndex(index) return sizes[index] end
 function isDownloading(id) return downloading[id] end
 function markAsDownloading(id, val) downloading[id] = val end
 
+local searchButton
+
+local function deselectSearch()
+    if type(searchButton.text)=='table' then
+        searchButton.text = searchButton.searchText[2]
+        love.keyboard.setTextInput(false)
+        return true
+    end
+end
+
 local function updateFiltered()
     if not mapsDataUnfiltered then mapsDataUnfiltered = mapsData end
     mapsData = {}
+    local searchFilter = searchButton.searchText and searchButton.searchText[2] and searchButton.searchText[2]~='' and searchButton.searchText[2]
     for i, map in ipairs(mapsDataUnfiltered) do
         if  (not next(filtersSet.sizes) or filtersSet.sizes[map.size])
         and (not next(filtersSet.players) or filtersSet.players[map.players])
         and (filterInstalled or not (map.localScenarioPath and love.filesystem.getInfo(map.localScenarioPath)))
+        and (not searchFilter or map.name:lower():match(searchFilter:lower()))
         then
             table.insert(mapsData, map)
         end
     end
     updateGridValues()
 end
+
+local searchIndicatorBlinkTimer
+
+searchButton = require'ui.elements.button'{
+    text = 'Search',
+    icon = love.graphics.newImage'graphics/search.png',
+    posXN = 0,
+    posYN = 0,
+    offsetXN = 0.5,
+    offsetXP = 86,
+    offsetYN = 0.5,
+    offsetYP = 35,
+    widthBase = 150,
+    heightBase = 30,
+    onPress = function(self, UI)
+        searchIndicatorBlinkTimer = love.timer.getTime()
+        self.text = self.searchText or {{1,1,1}, '', {1,1,1,1}, '|'}
+        self.searchText = self.text
+        love.keyboard.setTextInput(true)
+    end,
+    update = function(self, UI)
+        if searchIndicatorBlinkTimer and type(self.text)=='table' then
+            self.text[3][4] = math.floor((love.timer.getTime()-searchIndicatorBlinkTimer-1)%2)
+        end
+    end,
+}
 
 local function getAndApplyLibraryData(self)
     if not mapsData and love.thread.getChannel'mapLibData':peek() then
@@ -140,6 +178,23 @@ local function getAndApplyLibraryData(self)
             end
         end
 
+        table.insert(self.objects, require'ui.elements.button'{
+            text = 'Installed',
+            posXN = 1,
+            posYN = 0,
+            offsetXN = -0.5,
+            offsetXP = -91-(index*35),
+            offsetYN = 0.5,
+            offsetYP = 35,
+            widthBase = 90,
+            heightBase = 30,
+            onPress = function(self, UI)
+                filterInstalled = not filterInstalled
+                self.inactive = not filterInstalled
+                updateFiltered()
+            end,
+        })
+
         index = 0
         for i=1, 16 do
             if filterData.players[i] then
@@ -164,28 +219,31 @@ local function getAndApplyLibraryData(self)
             end
         end
 
-        table.insert(self.objects, require'ui.elements.button'{
-            text = 'Installed',
-            posXN = 0,
-            posYN = 0,
-            offsetXN = 0.5,
-            offsetXP = 86,
-            offsetYN = 0.5,
-            offsetYP = 35,
-            widthBase = 90,
-            heightBase = 30,
-            onPress = function(self, UI)
-                filterInstalled = not filterInstalled
-                self.inactive = not filterInstalled
-                updateFiltered()
-            end,
-        })
-        
+        table.insert(self.objects, searchButton)
+
         updateGridValues()
     end
 end
 
 return {
+    keypressed = function(self, key, ...)
+        if key=='escape' then
+            if deselectSearch() then
+                return true
+            end
+        elseif key=='backspace' and type(searchButton.text)=='table' then
+            searchButton.text[2] = searchButton.text[2]:sub(1,-2)
+            searchIndicatorBlinkTimer = love.timer.getTime()
+            updateFiltered()
+        end
+    end,
+    textinput = function(self, t)
+        if type(searchButton.text)=='table' then
+            searchButton.text[2] = searchButton.text[2]..t
+            searchIndicatorBlinkTimer = love.timer.getTime()
+            updateFiltered()
+        end
+    end,
     update = function(self, delta)
         frameCount = frameCount+1
         getAndApplyLibraryData(self)
@@ -270,6 +328,7 @@ return {
         mouseHoverIndex = 1+mouseHoverX+(scroll+mouseHoverY)*entriesPerRow
     end,
     mousepressed = function(self, x, y, button, istouch, presses)
+        deselectSearch()
         if mouseOverScroll and not mousePressedOnScroll then
             mousePressedOnScroll = mouseOverScroll
         end
