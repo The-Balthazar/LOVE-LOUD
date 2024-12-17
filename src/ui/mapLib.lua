@@ -212,7 +212,11 @@ return {
                     end
                     if mapsData then
                         if mapsData[i].localScenarioPath and love.filesystem.getInfo(mapsData[i].localScenarioPath) then
+                            if mapsData[i].outOfDate then
+                                love.graphics.setColor(1,0,0)
+                            end
                             love.graphics.draw(folderIcon, (86+x*110)*w.scale, (100+y*110)*w.scale, 0, w.scale, w.scale, 10, -80)
+                            love.graphics.setColor(1,1,1)
                         elseif isDownloading(mapsData[i].identifier) then
                             love.graphics.setColor(0,0,0)
                             for xx=-2, 2, 2 do

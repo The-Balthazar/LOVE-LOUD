@@ -3,7 +3,6 @@ local textHeadings, textValues, textDesc
 local white, grey = {1,1,1}, {0.5, 0.5, 0.5}
 local throbber = love.graphics.newImage'graphics/throbber.png'
 local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
-local outOfDate
 require'utils.filesystem'
 
 return {
@@ -52,14 +51,7 @@ return {
                     :gsub('\\t', '\t')
                 or '<error: no description>',
             }, 480, 'left' )
-            selected.localPath = ('%susermaps/%s'):format(writePath, selected.identifier)
-            selected.localScenarioPath = findMapScenarioLua(selected.localPath)
-            if selected.localScenarioPath then
-                scenarioInfo = love.filesystem.read(selected.localScenarioPath)
-                local localVersion = (scenarioInfo:match('map_version%s*%=%s*([^,%s]*)%s*,') or '')
-                outOfDate = tostring(selected.version):gsub('["\']', '')~=localVersion:gsub('["\']', '')
-            end
-
+            selected.localScenarioPath = selected.localScenarioPath or findMapScenarioLua(selected.localPath)
             return true
         end
     end,
@@ -131,10 +123,10 @@ return {
                 markAsDownloading(selected.identifier, true)
                 selected.downloads = selected.downloads+1
                 self.inactive = true
-                outOfDate = nil
+                selected.outOfDate = nil
             end,
             update = function(self, UI, delta)
-                if outOfDate then
+                if selected.outOfDate then
                     self.inactive = nil
                     self.icon = nil
                     self.text = 'Update'
@@ -163,7 +155,7 @@ return {
             onPress = function(self, UI)
                 if self.inactive then return end
                 markAsDownloading(selected.identifier, nil)
-                outOfDate = nil
+                selected.outOfDate = nil
                 forEachFile(selected.localPath, function(path, name)
                     love.filesystem.remove(path..'/'..(name or ''))
                 end)

@@ -53,7 +53,13 @@ function network.getMapLibData()
         if data.image then
             data.thumbnail = data.image:gsub('marked_preview', 'marked_preview_thumb', 1)  -- NOTE: Temporary until the value is fetched correctly
         end
-        data.localScenarioPath = data.identifier and findMapScenarioLua(writePath..'usermaps/'..data.identifier)
+        data.localPath = ('%susermaps/%s'):format(writePath, data.identifier)
+        data.localScenarioPath = data.identifier and findMapScenarioLua(data.localPath)
+        if data.localScenarioPath then
+            scenarioInfo = love.filesystem.read(data.localScenarioPath)
+            local localVersion = (scenarioInfo:match('map_version%s*%=%s*([^,%s]*)%s*,') or '')
+            data.outOfDate = tostring(data.version):gsub('["\']', '')~=localVersion:gsub('["\']', '')
+        end
         table.insert(mapsData, data)
     end
     return mapsData
