@@ -107,7 +107,8 @@ return {
             offsetXP = 10,
             offsetYN = -0.5,
             offsetYP = -10,
-            type = 'bigicon',
+            widthBase = 60,
+            heightBase = 60,
             onPress = function(self, UI)
                 UI:goBack()
             end,
@@ -120,7 +121,8 @@ return {
             offsetXP = 10,
             offsetYN = -1.5,
             offsetYP = -20,
-            type = 'bigicon',
+            widthBase = 60,
+            heightBase = 60,
             onPress = function(self, UI)
                 if self.inactive then return end
                 if selected.localScenarioPath then love.filesystem.remove(selected.localScenarioPath) end
@@ -156,7 +158,8 @@ return {
             offsetXP = 10,
             offsetYN = -2.5,
             offsetYP = -30,
-            type = 'bigicon',
+            widthBase = 60,
+            heightBase = 60,
             onPress = function(self, UI)
                 if self.inactive then return end
                 markAsDownloading(selected.identifier, nil)

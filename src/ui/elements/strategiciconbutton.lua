@@ -9,7 +9,8 @@ return function(iconType, oXN, oXP, oYN, oYP)
         offsetXP = oXP,
         offsetYN = oYN,
         offsetYP = oYP,
-        type = 'icon',
+        widthBase = 30,
+        heightBase = 30,
         icon = icon,
         inactive = userConfig.iconSet~=iconType,
         onPress = function(self, UI)

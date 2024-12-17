@@ -128,7 +128,8 @@ local function getAndApplyLibraryData(self)
                     offsetXP = -86-index*5,
                     offsetYN = 0.5,
                     offsetYP = 35,
-                    type = 'icon',
+                    widthBase = 30,
+                    heightBase = 30,
                     onPress = function(self, UI)
                         filtersSet.sizes[i] = not filtersSet.sizes[i] or nil
                         self.inactive = not filtersSet.sizes[i]
@@ -151,7 +152,8 @@ local function getAndApplyLibraryData(self)
                     offsetYP = 100+index*5,
                     offsetXN = -0.5,
                     offsetXP = -28,
-                    type = 'icon',
+                    widthBase = 30,
+                    heightBase = 30,
                     onPress = function(self, UI)
                         filtersSet.players[i] = not filtersSet.players[i] or nil
                         self.inactive = not filtersSet.players[i]
@@ -170,7 +172,8 @@ local function getAndApplyLibraryData(self)
             offsetXP = 86,
             offsetYN = 0.5,
             offsetYP = 35,
-            type = 'smollink',
+            widthBase = 90,
+            heightBase = 30,
             onPress = function(self, UI)
                 filterInstalled = not filterInstalled
                 self.inactive = not filterInstalled
@@ -298,7 +301,8 @@ return {
             offsetXP = 10,
             offsetYN = -0.5,
             offsetYP = -10,
-            type = 'bigicon',
+            widthBase = 60,
+            heightBase = 60,
             onPress = function(self, UI)
                 UI:goBack()
             end,

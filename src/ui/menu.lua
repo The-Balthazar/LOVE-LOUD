@@ -60,7 +60,8 @@ return {
             offsetXP = 50,
             offsetYN = -0.5,
             offsetYP = -50,
-            type = 'regular',
+            widthBase = 197,
+            heightBase = 60,
             onPress = function(self, UI)
                 if updating then return end
                 if self.inactive then return end
@@ -85,7 +86,8 @@ return {
             offsetXP = 297,
             offsetYN = -0.5,
             offsetYP = -50,
-            type = 'narrow',
+            widthBase = 150,
+            heightBase = 60,
             onPress = function(self, UI)
                 if launching then return end
                 if self.inactive then return end
@@ -109,7 +111,8 @@ return {
             offsetXP = 302,
             offsetYN = -0.5,
             offsetYP = -50,
-            type = 'narrow',
+            widthBase = 150,
+            heightBase = 60,
             onPress = function(self, UI)
             end,
             update = function(self, UI, delta)
@@ -123,7 +126,8 @@ return {
             offsetXP = 607,
             offsetYN = -0.5,
             offsetYP = -50,
-            type = 'bigicon',
+            widthBase = 60,
+            heightBase = 60,
             onPress = function(self, UI)
                 setUIMode(require'ui.mapLib')
             end,
@@ -137,7 +141,8 @@ return {
             offsetXP = -335,
             offsetYN = -0.5,
             offsetYP = -125,
-            type = 'tab',
+            widthBase = 100,
+            heightBase = 30,
             update = function(self, UI, delta)
                 self.inactive = menuActiveTab~='config'
             end,
@@ -153,7 +158,8 @@ return {
             offsetXP = -230,
             offsetYN = -0.5,
             offsetYP = -125,
-            type = 'tab',
+            widthBase = 100,
+            heightBase = 30,
             update = function(self, UI, delta)
                 self.inactive = menuActiveTab~='folders'
             end,
@@ -169,7 +175,8 @@ return {
             offsetXP = -125,
             offsetYN = -0.5,
             offsetYP = -125,
-            type = 'tab',
+            widthBase = 100,
+            heightBase = 30,
             update = function(self, UI, delta)
                 self.inactive = menuActiveTab~='links'
             end,
@@ -185,7 +192,8 @@ return {
             offsetXP = -50,
             offsetYN = -0.5,
             offsetYP = -125,
-            type = 'icon',
+            widthBase = 30,
+            heightBase = 30,
             icon = love.graphics.newImage'graphics/wrench.png',
             update = function(self, UI, delta)
                 self.inactive = menuActiveTab~='dev'
@@ -220,7 +228,8 @@ return {
             offsetXP = -85,
             offsetYN = -0.5,
             offsetYP = -50,
-            type = 'pencil',
+            widthBase = 200,
+            heightBase = 30,
             onPress = function(self, UI)
                 userConfig.docMods = not userConfig.docMods
                 self.text = userConfig.docMods and 'Documents mods enabled' or 'Documents mods disabled'
@@ -246,7 +255,8 @@ return {
             offsetXP = -50,
             offsetYN = -0.5,
             offsetYP = -50,
-            type = 'icon',
+            widthBase = 30,
+            heightBase = 30,
             icon = folderIcon,
             onPress = function(self, UI)
                 love.system.openURL(love.filesystem.getFullCommonPath'userdocuments'..'/my games/Gas Powered Games/Supreme Commander Forged Alliance/mods')
@@ -261,7 +271,8 @@ return {
             offsetXP = -85,
             offsetYN = -1.5,
             offsetYP = -55,
-            type = 'pencil',
+            widthBase = 200,
+            heightBase = 30,
             onPress = function(self, UI)
                 userConfig.docMaps = not userConfig.docMaps
                 self.text = userConfig.docMaps and 'Documents maps enabled' or 'Documents maps disabled'
@@ -287,7 +298,8 @@ return {
             offsetXP = -50,
             offsetYN = -1.5,
             offsetYP = -55,
-            type = 'icon',
+            widthBase = 30,
+            heightBase = 30,
             icon = folderIcon,
             onPress = function(self, UI)
                 love.system.openURL(love.filesystem.getFullCommonPath'userdocuments'..'/my games/Gas Powered Games/Supreme Commander Forged Alliance/maps')
@@ -309,7 +321,8 @@ return {
             offsetXP = -55,
             offsetYN = -1.5,
             offsetYP = -55,
-            type = 'pencil2',
+            widthBase = 190,
+            heightBase = 30,
             icon = folderIcon,
             onPress = function(self, UI)
                 love.system.openURL(love.filesystem.getRealDirectory(writePath)..'/bin')
@@ -324,7 +337,8 @@ return {
             offsetXP = -55,
             offsetYN = -0.5,
             offsetYP = -50,
-            type = 'pencil2',
+            widthBase = 190,
+            heightBase = 30,
             icon = folderIcon,
             onPress = function(self, UI)
                 love.system.openURL(love.filesystem.getFullCommonPath'userdocuments'..'/my games/Gas Powered Games/Supreme Commander Forged Alliance/replays')
@@ -339,7 +353,8 @@ return {
             offsetXP = -50,
             offsetYN = -1.5,
             offsetYP = -55,
-            type = 'pencil2',
+            widthBase = 190,
+            heightBase = 30,
             icon = folderIcon,
             onPress = function(self, UI)
                 love.filesystem.createDirectory(writePath..'usermaps')
@@ -355,7 +370,8 @@ return {
             offsetXP = -50,
             offsetYN = -0.5,
             offsetYP = -50,
-            type = 'pencil2',
+            widthBase = 190,
+            heightBase = 30,
             icon = folderIcon,
             onPress = function(self, UI)
                 love.filesystem.createDirectory(writePath..'usermods')
@@ -372,7 +388,8 @@ return {
             offsetXP = -45,
             offsetYN = -1.5,
             offsetYP = -55,
-            type = 'pencil',
+            widthBase = 195,
+            heightBase = 30,
             icon = love.graphics.newImage'graphics/discord.png',
             onPress = function(self, UI)
                 love.system.openURL('https://discord.gg/ZCC6tns6vb')
@@ -394,7 +411,8 @@ return {
             offsetXP = -45,
             offsetYN = -0.5,
             offsetYP = -50,
-            type = 'pencil',
+            widthBase = 195,
+            heightBase = 30,
             icon = love.graphics.newImage'graphics/pp.png',
             onPress = function(self, UI)
                 love.system.openURL('https://paypal.me/TheLOUDProject')
@@ -416,7 +434,8 @@ return {
             offsetXP = -50,
             offsetYN = -1.5,
             offsetYP = -55,
-            type = 'smollink',
+            widthBase = 90,
+            heightBase = 30,
             icon = love.graphics.newImage'graphics/onedrive.png',
             onPress = function(self, UI)
                 love.system.openURL('https://onedrive.live.com/?authkey=!APAfOJusxNHJJWM&id=730910080073E6E6!4068&cid=730910080073E6E6')
@@ -439,7 +458,8 @@ return {
             offsetXP = -55,
             offsetYN = -1.5,
             offsetYP = -55,
-            type = 'pencil2',
+            widthBase = 190,
+            heightBase = 30,
             onPress = function(self, UI)
                 love.thread.newThread'utils/threads/generateCRC.lua':start()
             end,
@@ -453,7 +473,8 @@ return {
             offsetXP = -50,
             offsetYN = -1.5,
             offsetYP = -55,
-            type = 'pencil2',
+            widthBase = 190,
+            heightBase = 30,
             icon = githubIcon,
             onPress = function(self, UI)
                 love.system.openURL('https://github.com/LOUD-Project/Git-LOUD')
@@ -475,7 +496,8 @@ return {
             offsetXP = -50,
             offsetYN = -0.5,
             offsetYP = -50,
-            type = 'pencil2',
+            widthBase = 190,
+            heightBase = 30,
             icon = githubIcon,
             onPress = function(self, UI)
                 love.system.openURL('https://github.com/The-Balthazar/LOVE-LOUD')
@@ -498,7 +520,8 @@ return {
             offsetXP = -50,
             offsetYN = -1.5,
             offsetYP = -55,
-            type = 'pencil2',
+            widthBase = 190,
+            heightBase = 30,
             onPress = function(self, UI)
                 createShortcut('LOUD', 'bin/SupremeCommander.exe /log ..\\LOUD\\bin\\LOUD.log /init ..\\LOUD\\bin\\LoudDataPath.lua')
             end,
