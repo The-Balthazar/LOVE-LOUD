@@ -15,7 +15,6 @@ local imageCache = {}
 local seton = love.graphics.newImage'graphics/map.png'
 local throbber = love.graphics.newImage'graphics/throbber.png'
 local folderIcon = love.graphics.newImage'graphics/folder.png'
-require'utils.filesystem'
 
 local scroll = 0
 local entriesPerRow = 9
@@ -91,7 +90,27 @@ local sizes = {
 function getMapSizeFromIndex(index) return sizes[index] end
 
 function isDownloading(id) return downloading[id] end
-function markAsDownloading(id, val) downloading[id] = val end
+
+function findMapDataById(id)
+    if not mapsData then return end
+    for i, map in ipairs(mapsData) do
+        if map.identifier==id then
+            return map
+        end
+    end
+end
+
+function markAsDownloading(id, val)
+    downloading[id] = val
+    local data = findMapDataById(id)
+    if not data then return end
+    data.outOfDate = nil
+    if val then
+        data.downloads = data.downloads+1--NOTE: Just for local view.
+    else
+        data.localScenarioPath = data.localScenarioPath or findMapScenarioLua(data.localPath)
+    end
+end
 
 local searchButton
 
@@ -256,6 +275,10 @@ return {
                 imageCache[val[1]] = love.graphics.newImage('temp/'..path..filename)
             end
         end
+        if not mapsData then return end
+        while love.thread.getChannel'updatingMarker':peek() do
+            markAsDownloading(unpack(love.thread.getChannel'updatingMarker':pop()))
+        end
     end,
     draw = function(self, w)
         require'ui.intro':draw(w)
@@ -269,13 +292,7 @@ return {
                         love.graphics.rectangle('line', (86+x*110)*w.scale, (100+y*110)*w.scale, (100)*w.scale, (100)*w.scale, w.scale/2, w.scale/2, 1)
                     end
                     if mapsData then
-                        if mapsData[i].localScenarioPath and love.filesystem.getInfo(mapsData[i].localScenarioPath) then
-                            if mapsData[i].outOfDate then
-                                love.graphics.setColor(1,0,0)
-                            end
-                            love.graphics.draw(folderIcon, (86+x*110)*w.scale, (100+y*110)*w.scale, 0, w.scale, w.scale, 10, -80)
-                            love.graphics.setColor(1,1,1)
-                        elseif isDownloading(mapsData[i].identifier) then
+                        if isDownloading(mapsData[i].identifier) then
                             love.graphics.setColor(0,0,0)
                             for xx=-2, 2, 2 do
                                 for yy=-2, 2, 2 do
@@ -284,10 +301,12 @@ return {
                             end
                             love.graphics.setColor(1,1,1)
                             love.graphics.draw(throbber, (91+x*110)*w.scale, (195+y*110)*w.scale, love.timer.getTime()*2, w.scale/2, w.scale/2, 20, 20)
-                            mapsData[i].localScenarioPath = findMapScenarioLua(mapsData[i].localPath)
-                            if mapsData[i].localScenarioPath then
-                                markAsDownloading(mapsData[i].identifier, nil)
+                        elseif mapsData[i].localScenarioPath and love.filesystem.getInfo(mapsData[i].localScenarioPath) then
+                            if mapsData[i].outOfDate then
+                                love.graphics.setColor(1,0,0)
                             end
+                            love.graphics.draw(folderIcon, (86+x*110)*w.scale, (100+y*110)*w.scale, 0, w.scale, w.scale, 10, -80)
+                            love.graphics.setColor(1,1,1)
                         end
                     end
                 end

@@ -117,27 +117,28 @@ return {
             heightBase = 60,
             onPress = function(self, UI)
                 if self.inactive then return end
-                if selected.localScenarioPath then love.filesystem.remove(selected.localScenarioPath) end
                 love.thread.getChannel'getMap':push(selected)
                 love.thread.newThread'utils/threads/getMap.lua':start()
                 markAsDownloading(selected.identifier, true)
-                selected.downloads = selected.downloads+1
                 self.inactive = true
-                selected.outOfDate = nil
             end,
             update = function(self, UI, delta)
                 if selected.outOfDate then
                     self.inactive = nil
                     self.icon = nil
                     self.text = 'Update'
+                elseif isDownloading(selected.identifier) then
+                    self.inactive = true
+                    self.icon = throbber
+                    self.text = nil
                 elseif selected.localScenarioPath and love.filesystem.getInfo(selected.localScenarioPath) or findMapScenarioLua(selected.localPath) then
                     self.inactive = true
                     self.icon = nil
                     self.text = 'Installed'
                 else
-                    self.inactive = isDownloading(selected.identifier)
-                    self.icon = isDownloading(selected.identifier) and throbber or nil
-                    self.text = (not self.icon) and 'Download' or nil
+                    self.inactive = nil
+                    self.icon = nil
+                    self.text = 'Download'
                 end
                 self.iconAngle = love.timer.getTime()
             end,
@@ -165,7 +166,7 @@ return {
                 self.inactive = not (selected.localScenarioPath and love.filesystem.getInfo(selected.localScenarioPath) or findMapScenarioLua(selected.localPath))
             end,
             showIf = function(self, UI)
-                return (selected.localScenarioPath and love.filesystem.getInfo(selected.localScenarioPath) or findMapScenarioLua(selected.localPath))
+                return not isDownloading(selected.identifier) and (selected.localScenarioPath and love.filesystem.getInfo(selected.localScenarioPath) or findMapScenarioLua(selected.localPath))
             end,
         },
     },

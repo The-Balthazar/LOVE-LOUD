@@ -101,6 +101,7 @@ function network.getMap(data)
     love.filesystem.remove(SCDWritePath)
     feedback:push{data.name, 'done'}
     feedback:push(('Map "%s" downloaded.'):format(data.name))
+    love.thread.getChannel'updatingMarker':push{data.identifier, nil}
 end
 
 return network

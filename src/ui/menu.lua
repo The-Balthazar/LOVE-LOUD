@@ -28,7 +28,7 @@ return {
             if msg=='allOpperationsStarted' then
                 allStarted = true
             elseif msgType=='number' then
-                todo=todo+1
+                todo=todo+msg
             elseif msgType=='string' then
                 table.insert(log, msg)
             elseif msgType=='table' then
@@ -104,7 +104,6 @@ return {
         },
         require'ui.elements.button'{
             text = 'Update maps',
-            inactive = true,
             posXN = 0,
             posYN = 1,
             offsetXN = 1.5,
@@ -114,6 +113,10 @@ return {
             widthBase = 150,
             heightBase = 60,
             onPress = function(self, UI)
+                if launching then return end
+                if self.inactive then return end
+                self.inactive = true
+                love.thread.newThread'utils/threads/updateMaps.lua':start()
             end,
             update = function(self, UI, delta)
             end,
