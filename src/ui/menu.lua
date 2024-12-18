@@ -325,7 +325,7 @@ return {
             heightBase = 30,
             icon = folderIcon,
             onPress = function(self, UI)
-                love.system.openURL(love.filesystem.getRealDirectory(writePath)..'/bin')
+                love.system.openURL(love.filesystem.getRealDirectory(writePath)..(love.filesystem.isFused() and '/LOUD/bin' or '/bin'))
             end,
         },
         require'ui.elements.button'{
@@ -358,7 +358,7 @@ return {
             icon = folderIcon,
             onPress = function(self, UI)
                 love.filesystem.createDirectory(writePath..'usermaps')
-                love.system.openURL(love.filesystem.getRealDirectory(writePath)..'/usermaps')
+                love.system.openURL(love.filesystem.getRealDirectory(writePath)..(love.filesystem.isFused() and '/LOUD/usermaps' or '/usermaps'))
             end,
         },
         require'ui.elements.button'{
@@ -375,7 +375,7 @@ return {
             icon = folderIcon,
             onPress = function(self, UI)
                 love.filesystem.createDirectory(writePath..'usermods')
-                love.system.openURL(love.filesystem.getRealDirectory(writePath)..'/usermods')
+                love.system.openURL(love.filesystem.getRealDirectory(writePath)..(love.filesystem.isFused() and '/LOUD/usermods' or '/usermods'))
             end,
         },
 
