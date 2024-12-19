@@ -168,6 +168,11 @@ local function getAndApplyLibraryData(self)
     if not mapsData and love.thread.getChannel'mapLibData':peek() then
         mapsData = love.thread.getChannel'mapLibData':pop()
 
+        if type(mapsData)=='string' then
+            feedback:push{{0.7, 0, 0.3}, mapsData}
+            return setUIMode(require'ui.menu')
+        end
+
         for i, map in ipairs(mapsData) do
             filterData.players[map.players] = (filterData.players[map.players] or 0)+1
             filterData.sizes[map.size] = (filterData.sizes[map.size] or 0)+1
