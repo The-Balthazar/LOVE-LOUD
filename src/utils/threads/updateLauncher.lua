@@ -5,6 +5,7 @@ local feedback = love.thread.getChannel'log'
 local code, body = require'https'.request(('https://api.github.com/repos/%s/releases/latest'):format(repo), headers)
 if code~=200 then
     feedback:push{{0.7, 0, 0.3}, ('LÖVE-LOUD self updater query failed: %d: %s\n'):format(code, body)}
+    feedback:push{'weblink', 'https://github.com/The-Balthazar/LOVE-LOUD/releases/latest', 'Manual download'}
     return
 end
 
@@ -14,17 +15,20 @@ local tag_name = body:match('"tag_name"%s*:%s*(%b"")%s*,')
 local changes = body:match('"body"%s*:%s*(%b"")%s*')
 if not (update_id and zipball_url) then
     feedback:push{{0.7, 0, 0.3}, 'LÖVE-LOUD update response parse fail\n'}
+    feedback:push{'weblink', 'https://github.com/The-Balthazar/LOVE-LOUD/releases/latest', 'Manual download'}
     return
 end
 
 if love.filesystem.read('string', 'version')==update_id then
     feedback:push{{1,1,1}, 'LÖVE-LOUD client is up to date: ', {0, 0.4, 0.7}, tag_name:sub(2, -2), '\n'}
+    feedback:push{'weblink', 'https://github.com/The-Balthazar/LOVE-LOUD/releases/latest', 'Full release info'}
     return
 end
 
 local code, body = require'https'.request(zipball_url:sub(2,-2), headers)
 if code~=200 then
     feedback:push{{0.7, 0, 0.3}, ('Failed to download latest LÖVE-LOUD release: %d: %s\n'):format(code, body)}
+    feedback:push{'weblink', 'https://github.com/The-Balthazar/LOVE-LOUD/releases/latest', 'Manual download'}
     return
 end
 
