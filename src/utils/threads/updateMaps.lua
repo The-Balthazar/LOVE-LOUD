@@ -18,3 +18,4 @@ for i, data in ipairs(libdata) do
     end
 end
 feedback:push'All maps up to date'
+love.thread.getChannel'wastefulSingleUseChannelToMarkMapUpdateComplete':push("yes")

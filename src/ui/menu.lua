@@ -1,5 +1,7 @@
 local feedback = love.thread.getChannel'log'
-local log = {}
+local log, visibleLog = {}
+local logScrollOffset = 0
+local logMaxLines = 10
 local files = {}
 local done = 0
 local todo = 0
@@ -14,13 +16,31 @@ function updateLoudDataPath()
     love.filesystem.write(path, require'utils.files.LoudDataPath'(str))
 end
 
+local throbber = love.graphics.newImage'graphics/throbber.png'
 local folderIcon = love.graphics.newImage'graphics/folder.png'
 local githubIcon = love.graphics.newImage'graphics/github.png'
 
 menuActiveTab = 'config'
 local buttonUpColour = {0,22/255,38/255}
 
+local function trimVisibleLog()
+    visibleLog = {}
+    local scale = love.graphics.getWidth()/1152
+    logMaxLines = math.floor((love.graphics.getHeight()-((337+155)*scale))/(18*scale))-1
+    local logStartPos = math.max(1, math.min(#log-logMaxLines, #log-logMaxLines+logScrollOffset))
+    for i=logStartPos, logStartPos+logMaxLines do
+        table.insert(visibleLog, log[i])
+    end
+end
+
 return {
+    resize = function(self, w)
+        trimVisibleLog()
+    end,
+    wheelmoved = function(self, x, y)
+        logScrollOffset = math.min(math.max(logMaxLines-#log+1, logScrollOffset-y), 0)
+        trimVisibleLog()
+    end,
     update = function(self, delta)
         while feedback:peek() do
             local msg = feedback:pop()
@@ -31,6 +51,7 @@ return {
                 todo=todo+msg
             elseif msgType=='string' then
                 table.insert(log, msg)
+                trimVisibleLog()
             elseif msgType=='table' then
                 local file = msg[1]
                 local state = msg[2]
@@ -94,12 +115,15 @@ return {
                 self.inactive = true
                 updating = true
                 self.text = 'Updating'
+                self.icon = throbber
                 love.thread.newThread'utils/threads/update.lua':start()
             end,
             update = function(self, UI, delta)
                 if not updating and self.text=='Updating' then
-                    self.text = 'Updated'
+                    self.text = 'LOUD Updated'
+                    self.icon = nil
                 end
+                self.iconAngle = love.timer.getTime()*2
             end,
         },
         require'ui.elements.button'{
@@ -116,9 +140,16 @@ return {
                 if launching then return end
                 if self.inactive then return end
                 self.inactive = true
+                self.text = 'Updating'
+                self.icon = throbber
                 love.thread.newThread'utils/threads/updateMaps.lua':start()
             end,
             update = function(self, UI, delta)
+                if self.inactive and love.thread.getChannel'wastefulSingleUseChannelToMarkMapUpdateComplete':pop() then
+                    self.text = 'Maps updated'
+                    self.icon = nil
+                end
+                self.iconAngle = love.timer.getTime()*2
             end,
         },
         require'ui.elements.button'{
@@ -529,12 +560,11 @@ return {
                 createShortcut('LOUD', 'bin/SupremeCommander.exe /log ..\\LOUD\\bin\\LOUD.log /init ..\\LOUD\\bin\\LoudDataPath.lua')
             end,
         },]]
-
     },
     draw = function(self)
         require'ui.intro'.draw(self)
         local scale = love.graphics.getWidth()/1152
-        love.graphics.printf(table.concat(log, '\n'), 576*scale, 337*scale, 556, 'right', 0, scale, scale)
+        love.graphics.printf(table.concat((visibleLog or log), '\n'), 576*scale, 337*scale, 556, 'right', 0, scale, scale)
         --[[
         for i, text in ipairs(log) do
             love.graphics.printf(text, 576*scale, (337+(i-1)*20)*scale, 556, 'right', 0, scale, scale)
