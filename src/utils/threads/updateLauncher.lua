@@ -107,3 +107,28 @@ love.filesystem.unmount(tempArchive)
 love.filesystem.remove(tempArchive)
 
 feedback:push({{1,1,1}, 'Restart LÖVE-LOUD to apply the update: ', {0.7,0.0,0.3}, tag_name:sub(2, -2), '\n'})
+
+if changes then
+    changes = loadstring('return '..changes)()
+end
+if type(changes)=='string' then
+    for line in changes:gmatch('[^\r\n]+') do
+        if line:match'^[^:]*:%s*http' then
+            local title, link = line:match'^([^:]*):%s*(http.*)'
+            feedback:push{'weblink', link, title:gsub('%*', '')}
+        else
+            line = (line:gsub('^%*%s*(.*[^.]+)%.?$', '%1   •') or line):gsub('%*%*', '*')
+            local t = {{1,1,1}, line:match'^[^*]*' or ''}
+            for bold, notbold in line:sub(#t[2]+1):gmatch('(%b**)([^*]*)') do
+                table.insert(t, {0.7,0.3,0.0})
+                table.insert(t, bold:sub(2, -2))
+                if notbold and notbold~='' then
+                    table.insert(t, {1,1,1})
+                    table.insert(t, notbold)
+                end
+            end
+            table.insert(t, '\n')
+            feedback:push(t)
+        end
+    end
+end
