@@ -11,6 +11,7 @@ end
 local zipball_url = body:match('"zipball_url"%s*:%s*(%b"")%s*,')
 local update_id = body:match('"url"%s*:%s*"https://api.github.com/repos/'..repo:gsub('-', '.')..'/releases/(%d*)"')
 local tag_name = body:match('"tag_name"%s*:%s*(%b"")%s*,')
+local changes = body:match('"body"%s*:%s*(%b"")%s*')
 if not (update_id and zipball_url) then
     feedback:push('LÖVE-LOUD update response parse fail')
     return
@@ -105,4 +106,4 @@ love.filesystem.write('version', update_id)
 love.filesystem.unmount(tempArchive)
 love.filesystem.remove(tempArchive)
 
-feedback:push('Restart LÖVE-LOUD to apply the update: '..tag_name:sub(2, -2))
+feedback:push({{1,1,1}, 'Restart LÖVE-LOUD to apply the update: ', {0.7,0.0,0.3}, tag_name:sub(2, -2), '\n'})

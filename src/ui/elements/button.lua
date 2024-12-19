@@ -23,9 +23,9 @@ local buttonCore = {
         love.graphics.setColor(self.inactive and colours.midgrey or colours.white)
         if self.text and self.icon then
             love.graphics.draw(self.icon, self.cornerX+self.height/2, self.midY, self.iconAngle or 0, w.scale, w.scale, self.icon:getWidth()/2, self.icon:getHeight()/2)
-            love.graphics.printf(self.text, self.cornerX+self.height, self.midY-8*w.scale, self.widthBase-self.heightBase, 'left', 0, w.scale)
+            love.graphics.printf(self.text, self.cornerX+self.height, self.midY-9*w.scale, self.widthBase-self.heightBase, 'left', 0, w.scale)
         elseif self.text then
-            love.graphics.printf(self.text, self.cornerX, self.midY-8*w.scale, self.widthBase, 'center', 0, w.scale)
+            love.graphics.printf(self.text, self.cornerX, self.midY-9*w.scale, self.widthBase, 'center', 0, w.scale)
         elseif self.icon then
             love.graphics.draw(self.icon, self.midX, self.midY, self.iconAngle or 0, w.scale, w.scale, self.icon:getWidth()/2, self.icon:getHeight()/2)
         end

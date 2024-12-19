@@ -1,7 +1,5 @@
 local feedback = love.thread.getChannel'log'
 local log, visibleLog = {}
-local logScrollOffset = 0
-local logMaxLines = 10
 local files = {}
 local done = 0
 local todo = 0
@@ -23,23 +21,88 @@ local githubIcon = love.graphics.newImage'graphics/github.png'
 menuActiveTab = 'config'
 local buttonUpColour = {0,22/255,38/255}
 
-local function trimVisibleLog()
+local logTop = 337
+local logWidth = 556
+local logScrollOffset = 0
+local logMaxHeight = 185
+local logHeightTester = love.graphics.newTextBatch(love.graphics.getFont())
+
+local function getLogLength()
+    local len = 0
+end
+
+local function getLogEntryHeight(entry)
+    logHeightTester:setf(entry.logObject or entry, logWidth, 'right')
+    return logHeightTester:getHeight()
+end
+
+local function trimVisibleLog(self)
+    for i=#self.objects, 1, -1 do
+        if self.objects[i].logObject then
+            table.remove(self.objects, i)
+        end
+    end
     visibleLog = {}
     local scale = love.graphics.getWidth()/1152
-    logMaxLines = math.floor((love.graphics.getHeight()-((337+155)*scale))/(18*scale))-1
-    local logStartPos = math.max(1, math.min(#log-logMaxLines, #log-logMaxLines+logScrollOffset))
-    for i=logStartPos, logStartPos+logMaxLines do
-        table.insert(visibleLog, log[i])
+    logMaxHeight = math.floor((love.graphics.getHeight()/scale)-(logTop+155))
+    local logStartIndex
+    local scrollMaxed
+    do
+        local checkHeight = 0
+        local maxFit
+        for i=#log+logScrollOffset, 1, -1 do
+            checkHeight = checkHeight+getLogEntryHeight(log[i])
+            if logMaxHeight<checkHeight then
+                break
+            else
+                logStartIndex = i
+            end
+            if i==1 then
+                scrollMaxed = true
+            end
+        end
+    end
+    if not logStartIndex then return end
+    local logRelativePos = 0
+    local lastLog
+    for i=logStartIndex, #log do
+        local entry = log[i]
+        local height = getLogEntryHeight(entry)
+        if logRelativePos+height<logMaxHeight then
+            if entry.logObject then
+                table.insert(visibleLog, entry.logObject)
+                table.insert(self.objects, entry)
+                entry.offsetYP=logTop+logRelativePos+(entry.logOffset or 0)
+            else
+                for j, v in ipairs(entry) do
+                    table.insert(visibleLog, v)
+                end
+            end
+            logRelativePos = logRelativePos+height
+            lastLog = i
+        end
+    end
+    if scrollMaxed then
+        logScrollOffset = lastLog-#log
     end
 end
 
+--[[
+NOTE: On scheme colours:
+    LOUD blue: {0,   0.4, 0.7}
+    Scarlet:   {0.7, 0,   0.3}
+    Lime:      {0.4, 0.7, 0}
+    Orange     {0.7, 0.3, 0.0}
+    Loud Invert{1,   0.6, 0.3}
+]]
+
 return {
     resize = function(self, w)
-        trimVisibleLog()
+        trimVisibleLog(self)
     end,
     wheelmoved = function(self, x, y)
-        logScrollOffset = math.min(math.max(logMaxLines-#log+1, logScrollOffset-y), 0)
-        trimVisibleLog()
+        logScrollOffset = math.min(math.max(-#log+1, logScrollOffset-y), 0)
+        trimVisibleLog(self)
     end,
     update = function(self, delta)
         while feedback:peek() do
@@ -50,8 +113,42 @@ return {
             elseif msgType=='number' then
                 todo=todo+msg
             elseif msgType=='string' then
+                table.insert(log, {{1,1,1}, msg, '\n'})
+                logScrollOffset = 0
+                trimVisibleLog(self)
+            elseif msgType=='table' and type(msg[1])=='table' then
                 table.insert(log, msg)
-                trimVisibleLog()
+                logScrollOffset = 0
+                trimVisibleLog(self)
+            elseif msgType=='table' and msg[1]=='weblink' then
+                local link, title = msg[2], msg[3]
+                local shortlink = #link<=26 and link:match'https?://(.*)' or link:sub(1,22):match'https?://(.*)'..'...'
+                table.insert(log, require'ui.elements.button'{
+                    logObject = '\n\n',
+                    text = title or shortlink,
+                    posXN = 1,
+                    posYN = 0,
+                    offsetXN = -0.5,
+                    offsetXP = -20,
+                    offsetYN = 0.5,
+                    offsetYP = 0,
+                    logOffset = 4,
+                    widthBase = 150,
+                    heightBase = 30,
+                    icon = link:match'github' and githubIcon or nil,
+                    onPress = function(self, UI)
+                        love.system.openURL(link)
+                    end,
+                    onHover = function(self, UI)
+                        if self.mouseOver then
+                            self.text = shortlink
+                        else
+                            self.text = title or shortlink
+                        end
+                    end,
+                })
+                logScrollOffset = 0
+                trimVisibleLog(self)
             elseif msgType=='table' then
                 local file = msg[1]
                 local state = msg[2]
@@ -564,17 +661,12 @@ return {
     draw = function(self)
         require'ui.intro'.draw(self)
         local scale = love.graphics.getWidth()/1152
-        love.graphics.printf(table.concat((visibleLog or log), '\n'), 576*scale, 337*scale, 556, 'right', 0, scale, scale)
-        --[[
-        for i, text in ipairs(log) do
-            love.graphics.printf(text, 576*scale, (337+(i-1)*20)*scale, 556, 'right', 0, scale, scale)
-        end
-        ]]
+        love.graphics.printf((visibleLog or log), 576*scale, logTop*scale, logWidth, 'right', 0, scale, scale)
         if updating~=nil or (#files+todo+done)>0 then
-            love.graphics.printf(('Files downloading: %d   Queued: %d   Finished: %d'):format(#files, todo, done), 20*scale, 337*scale, 556, 'right', 0, scale, scale)
+            love.graphics.printf(('Files downloading: %d   Queued: %d   Finished: %d'):format(#files, todo, done), 20*scale, logTop*scale, logWidth, 'right', 0, scale, scale)
         end
         for i, text in ipairs(files) do
-            love.graphics.printf(files[text], 20*scale, (337+(i)*20)*scale, 556, 'right', 0, scale, scale)
+            love.graphics.printf(files[text], 20*scale, (logTop+(i)*20)*scale, logWidth, 'right', 0, scale, scale)
         end
     end,
 }
