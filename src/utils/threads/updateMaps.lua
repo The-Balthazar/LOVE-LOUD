@@ -4,6 +4,8 @@ local updatingMarker = love.thread.getChannel'updatingMarker'
 feedback:push'Fetching map library data'
 local libdata = network.getMapLibData()
 
+if type(libdata) == 'string' then return feedback:push{{0.7, 0, 0.3}, libdata} end
+
 feedback:push'Checking maps'
 for i, data in ipairs(libdata) do
     if data.outOfDate then
