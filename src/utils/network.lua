@@ -16,7 +16,7 @@ function network.ftpGet(path)
         password= 'ftploud123',
         port    = 21,
     }
-    if not good then return feedback:push((path or 'no path')..': '..(err or 'no error')) end
+    if not good then return feedback:push{{0.7, 0, 0.3}, path or 'no path', ': ', err or 'no error'} end
     return table.concat(sink)
 end
 
@@ -40,7 +40,7 @@ end
 
 function network.getMapLibData()
     local code, body, headers = require'https'.request'https://theloudproject.org:8081/maps/'
-    if code~=200 then return 'Communication error' end
+    if code~=200 then return ('Communication error: %s: %s'):format(tostring(code), body) end
     local mapsData = {}
     for mapJsonRaw in body:gmatch'%b{}' do
         local data = {}
@@ -77,7 +77,7 @@ function network.getMap(data)
     local code, body, headers = require'https'.request('https://theloudproject.org:8081/'..data.file)
     if code~=200 then
         feedback:push{data.name, 'done'}
-        feedback:push(('%s map download failed: code %s: %s'):format(data.name, tostring(code), body))
+        feedback:push{{0.7, 0, 0.3}, ('%s map download failed: code %s: %s'):format(data.name, tostring(code), body)}
         return
     end
     feedback:push{data.name, 'writing'}
