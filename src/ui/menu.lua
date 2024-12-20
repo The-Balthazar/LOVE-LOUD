@@ -579,6 +579,29 @@ return {
                 end
             end,
         },
+        require'ui.elements.button'{
+            showIf = function(self, UI, delta) return menuActiveTab=='links' end,
+            text = 'Unit wiki',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -0.5,
+            offsetXP = -50,
+            offsetYN = -0.5,
+            offsetYP = -50,
+            widthBase = 90,
+            heightBase = 30,
+            icon = githubIcon,
+            onPress = function(self, UI)
+                love.system.openURL('https://github.com/LOUD-Project/Git-LOUD/wiki/')
+            end,
+            onHover = function(self, UI)
+                if self.mouseOver then
+                    self.text = 'github...'
+                else
+                    self.text = 'Unit wiki'
+                end
+            end,
+        },
 
         require'ui.elements.button'{
             showIf = function(self, UI, delta) return menuActiveTab=='dev' end,
