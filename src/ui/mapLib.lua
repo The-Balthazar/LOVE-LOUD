@@ -112,7 +112,7 @@ function markAsDownloading(id, val)
     end
 end
 
-local searchButton
+local searchFilterKey, searchButton, searchFilterButtons = 'name'
 
 local function deselectSearch()
     if type(searchButton.text)=='table' then
@@ -130,7 +130,7 @@ local function updateFiltered()
         if  (not next(filtersSet.sizes) or filtersSet.sizes[map.size])
         and (not next(filtersSet.players) or filtersSet.players[map.players])
         and (filterInstalled or not (map.localScenarioPath and love.filesystem.getInfo(map.localScenarioPath)))
-        and (not searchFilter or map.name:lower():match(searchFilter:lower()))
+        and (not searchFilter or map[searchFilterKey or 'name']:lower():match(searchFilter:lower()))
         then
             table.insert(mapsData, map)
         end
@@ -164,6 +164,12 @@ searchButton = require'ui.elements.button'{
     end,
 }
 
+searchFilterButtons = {
+    {key='name',text='Name'},
+    {key='author',text='Author'},
+    {key='description',text='Body text'},
+}
+
 local function getAndApplyLibraryData(self)
     if not mapsData and love.thread.getChannel'mapLibData':peek() then
         mapsData = love.thread.getChannel'mapLibData':pop()
@@ -195,7 +201,7 @@ local function getAndApplyLibraryData(self)
                     onPress = function(self, UI)
                         filtersSet.sizes[i] = not filtersSet.sizes[i] or nil
                         self.inactive = not filtersSet.sizes[i]
-                        updateFiltered()
+                        pcall(updateFiltered)
                     end,
                 })
                 index = index+1
@@ -215,7 +221,7 @@ local function getAndApplyLibraryData(self)
             onPress = function(self, UI)
                 filterInstalled = not filterInstalled
                 self.inactive = not filterInstalled
-                updateFiltered()
+                pcall(updateFiltered)
             end,
         })
 
@@ -236,7 +242,7 @@ local function getAndApplyLibraryData(self)
                     onPress = function(self, UI)
                         filtersSet.players[i] = not filtersSet.players[i] or nil
                         self.inactive = not filtersSet.players[i]
-                        updateFiltered()
+                        pcall(updateFiltered)
                     end,
                 })
                 index = index+1
@@ -244,6 +250,27 @@ local function getAndApplyLibraryData(self)
         end
 
         table.insert(self.objects, searchButton)
+        for i, base in ipairs(searchFilterButtons) do
+            local key = base.key
+            searchFilterButtons[base.key] = base
+            base.inactive = searchFilterKey~=base.key
+            base.posXN = 0
+            base.posYN = 0
+            base.offsetXN = 0.5+(i-1)
+            base.offsetXP = 236+i*5
+            base.offsetYN = 0.5
+            base.offsetYP = 35
+            base.widthBase = 60
+            base.heightBase = 30
+            base.onPress = function(self, UI)
+                searchFilterKey = self.key
+                for i, base in ipairs(searchFilterButtons) do
+                    base.inactive = searchFilterKey~=base.key
+                end
+                pcall(updateFiltered)
+            end
+            table.insert(self.objects, require'ui.elements.button'(base))
+        end
 
         updateGridValues()
     end
@@ -258,14 +285,14 @@ return {
         elseif key=='backspace' and type(searchButton.text)=='table' then
             searchButton.text[2] = searchButton.text[2]:sub(1,-2)
             searchIndicatorBlinkTimer = love.timer.getTime()
-            updateFiltered()
+            pcall(updateFiltered)
         end
     end,
     textinput = function(self, t)
         if type(searchButton.text)=='table' then
             searchButton.text[2] = searchButton.text[2]..t
             searchIndicatorBlinkTimer = love.timer.getTime()
-            updateFiltered()
+            pcall(updateFiltered)
         end
     end,
     update = function(self, delta)
