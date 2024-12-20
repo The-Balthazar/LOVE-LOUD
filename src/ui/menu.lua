@@ -512,24 +512,24 @@ return {
 
         require'ui.elements.button'{
             showIf = function(self, UI, delta) return menuActiveTab=='links' end,
-            text = 'LOUD Discord',
+            text = 'Unit wiki',
             posXN = 1,
             posYN = 1,
-            offsetXN = -1.5,
-            offsetXP = -45,
+            offsetXN = -0.5,
+            offsetXP = -345,
             offsetYN = -1.5,
             offsetYP = -55,
-            widthBase = 195,
+            widthBase = 90,
             heightBase = 30,
-            icon = love.graphics.newImage'graphics/discord.png',
+            icon = githubIcon,
             onPress = function(self, UI)
-                love.system.openURL('https://discord.gg/ZCC6tns6vb')
+                love.system.openURL('https://github.com/LOUD-Project/Git-LOUD/wiki/')
             end,
             onHover = function(self, UI)
                 if self.mouseOver then
-                    self.text = 'discord.gg/ZCC6tns6vb'
+                    self.text = 'github...'
                 else
-                    self.text = 'LOUD Discord'
+                    self.text = 'Unit wiki'
                 end
             end,
         },
@@ -538,10 +538,10 @@ return {
             text = 'Donate on PayPal',
             posXN = 1,
             posYN = 1,
-            offsetXN = -1.5,
-            offsetXP = -45,
-            offsetYN = -0.5,
-            offsetYP = -50,
+            offsetXN = -0.5,
+            offsetXP = -145,
+            offsetYN = -1.5,
+            offsetYP = -55,
             widthBase = 195,
             heightBase = 30,
             icon = love.graphics.newImage'graphics/pp.png',
@@ -581,24 +581,47 @@ return {
         },
         require'ui.elements.button'{
             showIf = function(self, UI, delta) return menuActiveTab=='links' end,
-            text = 'Unit wiki',
+            text = 'LOUD changelog',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -1.5,
+            offsetXP = -55,
+            offsetYN = -0.5,
+            offsetYP = -50,
+            widthBase = 190,
+            heightBase = 30,
+            icon = githubIcon,
+            onPress = function(self, UI)
+                love.system.openURL('https://github.com/LOUD-Project/Git-LOUD/blob/master/CHANGELOG.txt')
+            end,
+            onHover = function(self, UI)
+                if self.mouseOver then
+                    self.text = 'github.com... changelog.txt'
+                else
+                    self.text = 'LOUD changelog'
+                end
+            end,
+        },
+        require'ui.elements.button'{
+            showIf = function(self, UI, delta) return menuActiveTab=='links' end,
+            text = 'LOUD Discord',
             posXN = 1,
             posYN = 1,
             offsetXN = -0.5,
             offsetXP = -50,
             offsetYN = -0.5,
             offsetYP = -50,
-            widthBase = 90,
+            widthBase = 190,
             heightBase = 30,
-            icon = githubIcon,
+            icon = love.graphics.newImage'graphics/discord.png',
             onPress = function(self, UI)
-                love.system.openURL('https://github.com/LOUD-Project/Git-LOUD/wiki/')
+                love.system.openURL('https://discord.gg/ZCC6tns6vb')
             end,
             onHover = function(self, UI)
                 if self.mouseOver then
-                    self.text = 'github...'
+                    self.text = 'discord.gg/ZCC6tns6vb'
                 else
-                    self.text = 'Unit wiki'
+                    self.text = 'LOUD Discord'
                 end
             end,
         },
