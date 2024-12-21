@@ -687,26 +687,25 @@ return {
                 end
             end,
         },
-        --[[require'ui.elements.button'{
+        require'ui.elements.button'{
             showIf = function(self, UI, delta) return menuActiveTab=='dev' end,
-            inactive = not exeFound,
-            text = exeFound and 'Create LOUD launch symlink' or 'Can\'t find exe to make link',
+            text = 'Shortcut/launch commands',
             posXN = 1,
             posYN = 1,
-            offsetXN = -0.5,
-            offsetXP = -50,
-            offsetYN = -1.5,
-            offsetYP = -55,
+            offsetXN = -1.5,
+            offsetXP = -55,
+            offsetYN = -0.5,
+            offsetYP = -50,
             widthBase = 190,
             heightBase = 30,
             onPress = function(self, UI)
-                createShortcut('LOUD', 'bin/SupremeCommander.exe /log ..\\LOUD\\bin\\LOUD.log /init ..\\LOUD\\bin\\LoudDataPath.lua')
+                setUIMode(require'ui.help.shortcut')
             end,
-        },]]
+        },
     },
-    draw = function(self)
-        require'ui.intro'.draw(self)
-        local scale = love.graphics.getWidth()/1152
+    draw = function(self, w)
+        require'ui.intro'.draw(self, w)
+        local scale = w.scale
         love.graphics.printf((visibleLog or log), 576*scale, logTop*scale, logWidth, 'right', 0, scale, scale)
         if updating~=nil or (#files+todo+done)>0 then
             love.graphics.printf(('Files downloading: %d   Queued: %d   Finished: %d'):format(#files, todo, done), 20*scale, logTop*scale, logWidth, 'right', 0, scale, scale)
