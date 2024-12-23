@@ -40,7 +40,8 @@ end
 
 function network.getMapLibData(address)
     local code, body, headers = require'https'.request(address or 'https://theloudproject.org:8081/maps/')
-    if code~=200 then return ('Communication error: %s: %s'):format(tostring(code), body) end
+    if code==0 then return 'Map library server gave no response: Code 0' end
+    if code~=200 then return ('Communication error with map server: %s: %s'):format(tostring(code), body) end
     local mapsData = {}
     for mapJsonRaw in body:gmatch'%b{}' do
         local data = {}

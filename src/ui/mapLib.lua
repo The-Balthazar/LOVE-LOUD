@@ -178,6 +178,7 @@ local function getAndApplyLibraryData(self)
 
         if type(mapsData)=='string' then
             feedback:push{{0.7, 0, 0.3}, mapsData, '\n'}
+            feedback:push{{1, 0.6, 0.3}, 'Can\'t browse in read-only mode\n'}
             mapsData = nil
             libComError = true
             return setUIMode(require'ui.menu')
