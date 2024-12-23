@@ -15,6 +15,7 @@ local imageCache = {}
 local seton = love.graphics.newImage'graphics/map.png'
 local throbber = love.graphics.newImage'graphics/throbber.png'
 local folderIcon = love.graphics.newImage'graphics/folder.png'
+local feedback = love.thread.getChannel'log'
 
 local scroll = 0
 local entriesPerRow = 9
