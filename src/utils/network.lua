@@ -38,8 +38,8 @@ function network.ftpGetWrite(path)
     end
 end
 
-function network.getMapLibData()
-    local code, body, headers = require'https'.request'https://theloudproject.org:8081/maps/'
+function network.getMapLibData(address)
+    local code, body, headers = require'https'.request(address or 'https://theloudproject.org:8081/maps/')
     if code~=200 then return ('Communication error: %s: %s'):format(tostring(code), body) end
     local mapsData = {}
     for mapJsonRaw in body:gmatch'%b{}' do
@@ -65,16 +65,16 @@ function network.getMapLibData()
     return mapsData
 end
 
-function network.getMapLibFile(file)
-    local code, body, headers = require'https'.request('https://theloudproject.org:8081/'..file)
+function network.getMapLibFile(file, address)
+    local code, body, headers = require'https'.request((address or 'https://theloudproject.org:8081/')..file)
     if code~=200 then return file, 'Communication error' end
     return file, body
 end
 
-function network.getMap(data)
+function network.getMap(data, address)
     feedback:push(1)
     feedback:push{data.name, 'downloading'}
-    local code, body, headers = require'https'.request('https://theloudproject.org:8081/'..data.file)
+    local code, body, headers = require'https'.request((address or 'https://theloudproject.org:8081/')..data.file)
     if code~=200 then
         feedback:push{data.name, 'done'}
         feedback:push{{0.7, 0, 0.3}, ('%s map download failed: code %s: %s'):format(data.name, tostring(code), body)}
