@@ -10,6 +10,7 @@ while true do
     }
 end
 ]]:start()
+local libComError
 local mapsData, mapsDataUnfiltered
 local imageCache = {}
 local seton = love.graphics.newImage'graphics/map.png'
@@ -176,7 +177,9 @@ local function getAndApplyLibraryData(self)
         mapsData = love.thread.getChannel'mapLibData':pop()
 
         if type(mapsData)=='string' then
-            feedback:push{{0.7, 0, 0.3}, mapsData}
+            feedback:push{{0.7, 0, 0.3}, mapsData, '\n'}
+            mapsData = nil
+            libComError = true
             return setUIMode(require'ui.menu')
         end
 
@@ -278,6 +281,16 @@ local function getAndApplyLibraryData(self)
 end
 
 return {
+    load = function(self)
+        if libComError then
+            libComError = nil
+            love.thread.newThread[[
+            love.thread.getChannel'mapLibData':push(
+                require'utils.network'.getMapLibData()
+            )
+            ]]:start()
+        end
+    end,
     keypressed = function(self, key, ...)
         if key=='escape' then
             if deselectSearch() then

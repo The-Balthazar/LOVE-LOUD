@@ -4,7 +4,10 @@ local updatingMarker = love.thread.getChannel'updatingMarker'
 feedback:push'Fetching map library data'
 local libdata = network.getMapLibData()
 
-if type(libdata) == 'string' then return feedback:push{{0.7, 0, 0.3}, libdata} end
+if type(libdata) == 'string' then
+    love.thread.getChannel'wastefulSingleUseChannelToMarkMapUpdateComplete':push'no'
+    return feedback:push{{0.7, 0, 0.3}, libdata, '\n'}
+end
 
 feedback:push'Checking maps'
 for i, data in ipairs(libdata) do
@@ -20,4 +23,4 @@ for i, data in ipairs(libdata) do
     end
 end
 feedback:push'All maps up to date'
-love.thread.getChannel'wastefulSingleUseChannelToMarkMapUpdateComplete':push("yes")
+love.thread.getChannel'wastefulSingleUseChannelToMarkMapUpdateComplete':push'yes'

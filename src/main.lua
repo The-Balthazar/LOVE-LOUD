@@ -2,6 +2,9 @@ local uiMode
 
 function setUIMode(mode)
     uiMode = mode
+    if uiMode.load then
+        uiMode:load()
+    end
     love.update(0)
     love.mousemoved(love.mouse.getX() or 0, love.mouse.getY() or 0, 0, 0)
 end

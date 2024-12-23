@@ -242,9 +242,16 @@ return {
                 love.thread.newThread'utils/threads/updateMaps.lua':start()
             end,
             update = function(self, UI, delta)
-                if self.inactive and love.thread.getChannel'wastefulSingleUseChannelToMarkMapUpdateComplete':pop() then
-                    self.text = 'Maps updated'
-                    self.icon = nil
+                if self.inactive then
+                    local val = love.thread.getChannel'wastefulSingleUseChannelToMarkMapUpdateComplete':pop()
+                    if val=='yes' then
+                        self.text = 'Maps updated'
+                        self.icon = nil
+                    elseif val=='no' then
+                        self.text = 'Retry map update'
+                        self.inactive = nil
+                        self.icon = nil
+                    end
                 end
                 self.iconAngle = love.timer.getTime()*2
             end,
