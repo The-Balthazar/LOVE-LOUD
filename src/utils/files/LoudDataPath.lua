@@ -1,7 +1,7 @@
 local maps = "-*(mount_contents[^\n\ra-zA-Z]*SHGetFolderPath[^\n\ra-zA-Z]*PERSONAL[^\n\ra-zA-Z]*My Games[^\n\ra-zA-Z]*Gas Powered Games[^\n\ra-zA-Z]*Supreme Commander Forged Alliance[^\n\ra-zA-Z]*maps[^\n\ra-zA-Z]*/maps[^\n\ra-zA-Z]*)"
 local mods = "-*(mount_contents[^\n\ra-zA-Z]*SHGetFolderPath[^\n\ra-zA-Z]*PERSONAL[^\n\ra-zA-Z]*My Games[^\n\ra-zA-Z]*Gas Powered Games[^\n\ra-zA-Z]*Supreme Commander Forged Alliance[^\n\ra-zA-Z]*mods[^\n\ra-zA-Z]*/mods[^\n\ra-zA-Z]*)"
 local stratReg = "mount_dir[^\n\ra-zA-Z]*InitFileDir[^\n\r]*BrewLAN.StrategicIcons[.*A-Za-z-]*scd[^\n\ra-zA-Z]*"
-local stratForm = "mount_dir(InitFileDir .. '\\BrewLAN-StrategicIconsOverhaul-%s.scd', '/')"
+local stratForm = "mount_dir(InitFileDir .. '\\\\BrewLAN-StrategicIconsOverhaul-%s.scd', '/')"
 local feedback = love.thread.getChannel'log'
 local reps
 require'utils.filesystem'
