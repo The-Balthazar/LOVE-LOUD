@@ -6,7 +6,7 @@ local todo = 0
 local updating, launching, allStarted
 
 local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
-local exeFound = love.filesystem.getInfo('SCFA/bin/SupremeCommander.exe')
+local exeFound = love.filesystem.getInfo('SCFA/bin/SupremeCommander.exe') and 'bin/SupremeCommander.exe' or love.filesystem.getInfo('SCFA/bin/ForgedAlliance.exe') and 'bin/ForgedAlliance.exe'
 
 function updateLoudDataPath()
     local path = writePath..'bin/LoudDataPath.lua'
@@ -186,7 +186,7 @@ return {
                 self.inactive = true
                 self.text = 'Launching'
                 launching = true
-                osCall('bin/SupremeCommander.exe', '/log "..\\LOUD\\bin\\LOUD.log" /init "..\\LOUD\\bin\\LoudDataPath.lua"')
+                osCall(exeFound, '/log "..\\LOUD\\bin\\LOUD.log" /init "..\\LOUD\\bin\\LoudDataPath.lua"')
                 os.exit()
             end,
             update = function(self, UI, delta)
