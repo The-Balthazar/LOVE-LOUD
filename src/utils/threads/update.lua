@@ -6,7 +6,7 @@ local threads = {}
 feedback:push'Checking for updates'
 
 local fileinfo = require'utils.network'.ftpGet('SCFA_FileInfo.txt')
-if type(fileinfo)~='string' then return feedback:push{{0.7, 0, 0.3}, 'Update aborted; SCFA_FileInfo.txt not received'} end
+if type(fileinfo)~='string' then return feedback:push{{0.7, 0, 0.3}, 'Update aborted; SCFA_FileInfo.txt not received\n'} end
 
 local cleanFiles, checkEmpty = {}, {}
 local toClean = {
