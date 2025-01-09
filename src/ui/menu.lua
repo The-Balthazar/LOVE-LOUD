@@ -186,7 +186,7 @@ return {
                 self.inactive = true
                 self.text = 'Launching'
                 launching = true
-                osCall(exeFound, '/log "..\\LOUD\\bin\\LOUD.log" /init "..\\LOUD\\bin\\LoudDataPath.lua"')
+                osCall(exeFound, '/log "LOUD\\bin\\LOUD.log" /init "..\\LOUD\\bin\\LoudDataPath.lua"')
                 os.exit()
             end,
             update = function(self, UI, delta)
