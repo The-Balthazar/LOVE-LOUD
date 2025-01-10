@@ -12,13 +12,13 @@ local SCFA_FileInfo = {}
 local enumerate
 function enumerate(path)
     for i, name in ipairs(love.filesystem.getDirectoryItems(writePath..path)) do
-        local thisPath = writePath..path..'/'..name
+        local thisPath = path..'/'..name
         local info = love.filesystem.getInfo(thisPath)
         if info.type=='directory' then
             enumerate(thisPath)
         else
             local str = ('%s,0x%s,%d\n'):format(
-                thisPath:gsub('/', '\\'),
+                thisPath:gsub(writePath, '', 1):gsub('/', '\\'),
                 love.data.encode('string', 'hex', love.data.hash('string', 'sha1', love.filesystem.read(thisPath))):upper(),
                 info.size
             )
@@ -30,7 +30,7 @@ end
 love.thread.getChannel'log':push('Generating CRC')
 for i, path in ipairs(paths) do
     love.thread.getChannel'log':push('Enumerating: '..path)
-    enumerate(path)
+    enumerate(writePath..path)
 end
 
 local infoPath = writePath..'SCFA_FileInfo.txt'
