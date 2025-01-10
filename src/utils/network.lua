@@ -36,8 +36,12 @@ function network.ftpGetWrite(path)
         love.filesystem.createDirectory(writePath..folder)
         feedback:push{path, 'writing'}
         local handler = fileHanders[path:match'([^/\\]*)$']
-        love.filesystem.write(writePath..path, handler and handler(fileData) or fileData)
-        feedback:push{path, 'done'}
+        local success, message = love.filesystem.write(writePath..path, handler and handler(fileData) or fileData)
+        if success then
+            feedback:push{path, 'done'}
+        else
+            feedback:push{{0.7, 0, 0.3}, path, ' error: ', message, '\n'}
+        end
     end
 end
 
