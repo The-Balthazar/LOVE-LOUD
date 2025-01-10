@@ -11,7 +11,7 @@ local SCFA_FileInfo = {}
 
 local enumerate
 function enumerate(path)
-    for i, name in ipairs(love.filesystem.getDirectoryItems(writePath..path)) do
+    for i, name in ipairs(love.filesystem.getDirectoryItems(path)) do
         local thisPath = path..'/'..name
         local info = love.filesystem.getInfo(thisPath)
         if info.type=='directory' then
