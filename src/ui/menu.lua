@@ -17,6 +17,7 @@ end
 local throbber = love.graphics.newImage'graphics/throbber.png'
 local folderIcon = love.graphics.newImage'graphics/folder.png'
 local githubIcon = love.graphics.newImage'graphics/github.png'
+local pathImage = not exeFound and love.graphics.newImage'graphics/help/folder-dir.png'
 
 menuActiveTab = 'config'
 local buttonUpColour = {0,22/255,38/255}
@@ -719,6 +720,10 @@ return {
         end
         for i, text in ipairs(files) do
             love.graphics.printf(files[text], 20*scale, (logTop+(i)*20)*scale, logWidth, 'right', 0, scale, scale)
+        end
+        if not exeFound then
+            love.graphics.draw(pathImage, 50*scale, 50*scale, 0, scale, scale)
+            love.graphics.printf('Install directory should look like this ^', 50*scale, 503*scale, 250, 'left', 0, scale, scale)
         end
     end,
 }
