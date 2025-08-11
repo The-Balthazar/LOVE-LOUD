@@ -171,7 +171,7 @@ return {
     end,
     objects = {
         require'ui.elements.button'{
-            text = exeFound and t('launch_game', 'Launch game') or t('game_exe_not_found', 'Game exe not found'),
+            text = exeFound and t('launch_game') or t('game_exe_not_found'),
             inactive = not exeFound,
             posXN = 0,
             posYN = 1,
@@ -185,7 +185,7 @@ return {
                 if updating then return end
                 if self.inactive then return end
                 self.inactive = true
-                self.text = t('launching', 'Launching')
+                self.text = t('launching')
                 launching = true
                 osCall(exeFound, '/log "LOUD\\bin\\LOUD.log" /init "..\\LOUD\\bin\\LoudDataPath.lua"')
                 os.exit()
@@ -198,7 +198,7 @@ return {
         },
 
         require'ui.elements.button'{
-            text = t('update_loud', 'Update LOUD'),
+            text = t('update_loud'),
             posXN = 0,
             posYN = 1,
             offsetXN = 0.5,
@@ -212,20 +212,20 @@ return {
                 if self.inactive then return end
                 self.inactive = true
                 updating = true
-                self.text = t('updating', 'Updating')
+                self.text = t('updating')
                 self.icon = throbber
                 love.thread.newThread'utils/threads/update.lua':start()
             end,
             update = function(self, UI, delta)
-                if not updating and self.text==t('updating', 'Updating') then
-                    self.text = t('loud_updated', 'LOUD Updated')
+                if not updating and self.text==t('updating') then
+                    self.text = t('loud_updated')
                     self.icon = nil
                 end
                 self.iconAngle = love.timer.getTime()*2
             end,
         },
         require'ui.elements.button'{
-            text = t('update_maps', 'Update maps'),
+            text = t('update_maps'),
             posXN = 0,
             posYN = 1,
             offsetXN = 1.5,
@@ -238,7 +238,7 @@ return {
                 if launching then return end
                 if self.inactive then return end
                 self.inactive = true
-                self.text = t('updating', 'Updating')
+                self.text = t('updating')
                 self.icon = throbber
                 love.thread.newThread'utils/threads/updateMaps.lua':start()
             end,
@@ -246,10 +246,10 @@ return {
                 if self.inactive then
                     local val = love.thread.getChannel'wastefulSingleUseChannelToMarkMapUpdateComplete':pop()
                     if val=='yes' then
-                        self.text = t('maps_updated', 'Maps updated')
+                        self.text = t('maps_updated')
                         self.icon = nil
                     elseif val=='no' then
-                        self.text = t('retry_map_update', 'Retry map update')
+                        self.text = t('retry_map_update')
                         self.inactive = nil
                         self.icon = nil
                     end
@@ -273,7 +273,7 @@ return {
         },
 
         require'ui.elements.button'{
-            text = t('game_config', 'Game config'),
+            text = t('game_config'),
             posXN = 1,
             posYN = 1,
             offsetXN = -0.5,
@@ -290,7 +290,7 @@ return {
             end,
         },
         require'ui.elements.button'{
-            text = t('folder_links', 'Folder links'),
+            text = t('folder_links'),
             posXN = 1,
             posYN = 1,
             offsetXN = -0.5,
@@ -307,7 +307,7 @@ return {
             end,
         },
         require'ui.elements.button'{
-            text = t('web_links', 'Web links'),
+            text = t('web_links'),
             posXN = 1,
             posYN = 1,
             offsetXN = -0.5,
@@ -324,7 +324,7 @@ return {
             end,
         },
         require'ui.elements.button'{
-            text = t('language', 'Language'),
+            text = t('language'),
             posXN = 1,
             posYN = 1,
             offsetXN = -0.5,
@@ -731,7 +731,7 @@ return {
         -- Language selector buttons
         require'ui.elements.button'{
             showIf = function(self, UI, delta) return menuActiveTab=='language' end,
-            text = t('select_language', 'Select Language:'),
+            text = t('select_language'),
             posXN = 1,
             posYN = 1,
             offsetXN = -0.5,

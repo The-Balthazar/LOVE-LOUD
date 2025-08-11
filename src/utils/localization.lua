@@ -35,21 +35,21 @@ function localization.loadLanguage(langCode)
 end
 
 -- Get translated text
-function localization.getText(key, fallback)
+function localization.getText(key)
     if translations[currentLanguage] and translations[currentLanguage][key] then
         return translations[currentLanguage][key]
-    elseif currentLanguage ~= 'en' and translations['en'] and translations['en'][key] then
+    elseif translations['en'] and translations['en'][key] then
         -- Fallback to English
         return translations['en'][key]
     else
-        -- Return fallback or key
-        return fallback or key
+        -- Return key
+        return key
     end
 end
 
 -- Shorthand function for getting text
-function localization.t(key, fallback)
-    return localization.getText(key, fallback)
+function localization.t(key)
+    return localization.getText(key)
 end
 
 -- Set current language
