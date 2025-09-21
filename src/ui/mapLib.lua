@@ -61,6 +61,9 @@ function drawCached(filename, x, y, w, h, drawthrough)
         love.graphics.draw(imageCache[filename], x, y, 0, w/imageCache[filename]:getWidth(), h/imageCache[filename]:getHeight())
     else
         if not drawthrough then
+            if imageCache[filename]=='error' then
+                love.graphics.setColor(0.7, 0, 0.3)
+            end
             love.graphics.draw(seton, x, y, 0, w/1024, h/1024)
         end
         love.graphics.setColor(0, 0, 0)
@@ -319,7 +322,14 @@ return {
                 local path, filename = val[1]:match'(.*)(/[^/]*)'
                 love.filesystem.createDirectory('temp/'..path)
                 love.filesystem.write('temp/'..path..filename, val[2])
-                imageCache[val[1]] = love.graphics.newImage('temp/'..path..filename)
+                local success, img = pcall(love.graphics.newImage, 'temp/'..path..filename)
+                if success then
+                    imageCache[val[1]] = img
+                else
+                    love.filesystem.remove('temp/'..path..filename)
+                    imageCache[val[1]] = 'error'
+                    feedback:push{{0.7, 0, 0.3}, filename..' file error', '\n'}
+                end
             end
         end
         if not mapsData then return end
