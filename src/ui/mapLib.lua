@@ -72,6 +72,18 @@ function drawCached(filename, x, y, w, h, drawthrough)
     end
 end
 
+function canClearCacheFor(filename)
+    return imageCache[filename] and imageCache[filename]~='Loading'
+end
+
+function clearCacheFor(filename)
+    if imageCache[filename]=='Loading' then return end
+    imageCache[filename] = nil
+    if love.filesystem.getInfo('temp/'..filename) then
+        love.filesystem.remove('temp/'..filename)
+    end
+end
+
 local downloading = {}
 
 local filterData = {

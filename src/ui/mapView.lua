@@ -169,6 +169,24 @@ return {
                 return not isDownloading(selected.identifier) and (selected.localScenarioPath and love.filesystem.getInfo(selected.localScenarioPath) or findMapScenarioLua(selected.localPath))
             end,
         },
+        require'ui.elements.button'{
+            text = 'Refresh',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -0.5,
+            offsetXP = -10,
+            offsetYN = -0.5,
+            offsetYP = -10,
+            widthBase = 60,
+            heightBase = 25,
+            onPress = function(self, UI)
+                clearCacheFor(selected.thumbnail)
+                clearCacheFor(selected.image)
+            end,
+            showIf = function(self, UI)
+                return canClearCacheFor(selected.thumbnail) or canClearCacheFor(selected.image)
+            end,
+        },
     },
     goBack = function(self)
         setUIMode(require'ui.mapLib')
