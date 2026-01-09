@@ -47,23 +47,27 @@ updateGridValues()
 
 function drawCached(filename, x, y, w, h, drawthrough)
     if filename and not imageCache[filename] then
-        if love.filesystem.getInfo('temp/'..filename) then
-            if frameCount~=lastFetch then
-                imageCache[filename] = love.graphics.newImage('temp/'..filename)
-                lastFetch = frameCount
-            end
+        imageCache[filename] = love.filesystem.getInfo('temp/'..filename) and 'Loading' or 'Download'
+    end
+    if imageCache[filename]=='Loading' and frameCount~=lastFetch then
+        local ok, data = pcall(love.graphics.newImage, 'temp/'..filename)
+        if ok then
+            imageCache[filename] = data
         else
-            love.thread.getChannel'mapLibRequests':push(filename)
-            imageCache[filename] = 'Loading'
+            love.filesystem.remove('temp/'..filename)
+            imageCache[filename] = 'Download'
+            feedback:push{{0.7, 0, 0.3}, data}
         end
+        lastFetch = frameCount
+    end
+    if imageCache[filename]=='Download' then
+        love.thread.getChannel'mapLibRequests':push(filename)
+        imageCache[filename] = 'Downloading'
     end
     if filename and type(imageCache[filename])=='userdata' then
         love.graphics.draw(imageCache[filename], x, y, 0, w/imageCache[filename]:getWidth(), h/imageCache[filename]:getHeight())
     else
         if not drawthrough then
-            if imageCache[filename]=='error' then
-                love.graphics.setColor(0.7, 0, 0.3)
-            end
             love.graphics.draw(seton, x, y, 0, w/1024, h/1024)
         end
         love.graphics.setColor(0, 0, 0)
@@ -73,12 +77,12 @@ function drawCached(filename, x, y, w, h, drawthrough)
 end
 
 function canClearCacheFor(filename)
-    return imageCache[filename] and imageCache[filename]~='Loading'
+    return imageCache[filename] and imageCache[filename]~='Downloading'
 end
 
 function clearCacheFor(filename)
-    if imageCache[filename]=='Loading' then return end
-    imageCache[filename] = nil
+    if imageCache[filename]=='Downloading' then return end
+    imageCache[filename] = 'Download'
     if love.filesystem.getInfo('temp/'..filename) then
         love.filesystem.remove('temp/'..filename)
     end
@@ -334,14 +338,7 @@ return {
                 local path, filename = val[1]:match'(.*)(/[^/]*)'
                 love.filesystem.createDirectory('temp/'..path)
                 love.filesystem.write('temp/'..path..filename, val[2])
-                local success, img = pcall(love.graphics.newImage, 'temp/'..path..filename)
-                if success then
-                    imageCache[val[1]] = img
-                else
-                    love.filesystem.remove('temp/'..path..filename)
-                    imageCache[val[1]] = 'error'
-                    feedback:push{{0.7, 0, 0.3}, filename..' file error', '\n'}
-                end
+                imageCache[val[1]] = 'Loading'
             end
         end
         if not mapsData then return end
