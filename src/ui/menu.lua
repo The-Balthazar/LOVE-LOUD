@@ -7,8 +7,10 @@ local updating, launching, allStarted
 
 local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
 local exeFound = love.filesystem.getInfo('SCFA/bin/SupremeCommander.exe') and 'bin/SupremeCommander.exe' or love.filesystem.getInfo('SCFA/bin/ForgedAlliance.exe') and 'bin/ForgedAlliance.exe'
+local initFound = love.filesystem.getInfo(writePath..'bin/LoudDataPath.lua')
 
 function updateLoudDataPath()
+    if not initFound then return end
     local path = writePath..'bin/LoudDataPath.lua'
     local str = love.filesystem.read("string", path)
     love.filesystem.write(path, require'utils.files.LoudDataPath'(str))
@@ -184,6 +186,8 @@ return {
             onPress = function(self, UI)
                 if updating then return end
                 if self.inactive then return end
+                if not initFound then initFound = love.filesystem.getInfo(writePath..'bin/LoudDataPath.lua') end
+                if not initFound then return love.thread.getChannel'log':push{{0.7, 0, 0.3}, 'LoudDataPath.lua not found:', {1,1,1}, ' Have you performed first update/install?', '\n'} end
                 self.inactive = true
                 self.text = 'Launching'
                 launching = true
