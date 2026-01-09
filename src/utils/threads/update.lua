@@ -6,7 +6,17 @@ local threads = {}
 feedback:push'Checking for updates'
 
 local fileinfo = require'utils.network'.ftpGet('SCFA_FileInfo.txt')
-if type(fileinfo)~='string' then return feedback:push{{0.7, 0, 0.3}, 'Update aborted; SCFA_FileInfo.txt not received\n'} end
+if type(fileinfo)~='string' then
+    feedback:push{{0.7, 0, 0.3}, 'Update aborted; SCFA_FileInfo.txt not received\n'}
+    feedback:push{{1, 1, 1}, 'Checking connection\n'}
+    local code, body, headers = require'https'.request('https://theloudproject.org')
+    if code==200 then
+        feedback:push{{1, 1, 1}, 'theloudproject.org is reachable; ', {1, 0.6, 0.3}, 'your connection might be blocking FTP\n'}
+    else
+        feedback:push{{0.7, 0, 0.3}, 'Can\'t reach theloudproject.org\n'}
+    end
+    return
+end
 
 local cleanFiles, checkEmpty = {}, {}
 local toClean = {
