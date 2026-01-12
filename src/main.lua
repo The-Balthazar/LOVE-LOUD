@@ -130,10 +130,17 @@ function love.keypressed(key, ...)
     if key=='escape' and uiMode.goBack then
         uiMode:goBack()
     end
+    if key=='v' and (love.keyboard.isDown'lctrl' or love.keyboard.isDown'rctrl') then
+        require'utils.debug'.logAnalyse(love.system.getClipboardText())
+    end
 end
 
 function love.textinput(...)
     if uiMode.textinput then
         uiMode:textinput(...)
     end
+end
+
+function love.filedropped(file)
+	require'utils.debug'.logAnalyse(file)
 end
