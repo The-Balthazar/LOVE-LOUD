@@ -9,6 +9,8 @@ local errorMatches = {
     {msg = 'File load error',                   match = 'warning: SCR_LuaDoFileConcat: Loading .-([^\\"]*%.[lb][up]a?)%(%d*%):'},
     {msg = 'Entity script error',               match = 'warning: Error running .- script in Entity (.-) at '},
     {msg = 'Unknown unit ID error',             match = 'warning: Unknown unit type: (.+)'},
+    {msg = 'Error in file',                     match = 'warning: Error in file (.-) : '},
+    {msg = 'Error running script',              match = 'warning: Error running lua script: (.+)'},
     -- {msg = 'Out of bounds flatten warning',      find = 'warning: Attempted to flatten terrain outside map boundary! Operation Failed!'},
     -- {msg = 'Nil resource warning',               find = 'warning: GetResource: Invalid name ""'},
 }
@@ -29,6 +31,7 @@ function debug.logAnalyse(log, detail, nameOverwrite)
             if line and (data.find and line:find(data.find) or not detail and data.match and line:find(data.match)) then
                 if not warns[data.msg] then table.insert(warns, data.msg) end
                 warns[data.msg] = (warns[data.msg] or 0)+1
+                break
             elseif line and data.match then
                 local match = line:match(data.match)
                 if match then
@@ -36,6 +39,7 @@ function debug.logAnalyse(log, detail, nameOverwrite)
                     warns[data.msg] = warns[data.msg] or {}
                     if not warns[data.msg][match] then table.insert(warns[data.msg], match) end
                     warns[data.msg][match] = (warns[data.msg][match] or 0)+1
+                    break
                 end
             end
         end
