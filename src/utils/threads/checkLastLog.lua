@@ -4,10 +4,12 @@ local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
 local feedback = love.thread.getChannel'log'
 
 local lastLog = writePath..'bin/LOUD.log'
+local logInfo = love.filesystem.getInfo(lastLog)
 
-if love.filesystem.getInfo(lastLog) then
+if logInfo then
     local ok, chunk = pcall(love.filesystem.read, lastLog)
     if ok and chunk then
-        require'utils.debug'.logAnalyse(chunk, false, 'previous game log')
+        local logTime = logInfo.modtime and os.date(' from %Y %B %d, %H:%M', logInfo.modtime) or ''
+        require'utils.debug'.logAnalyse(chunk, false, 'previous game log'..logTime)
     end
 end
