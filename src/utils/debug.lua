@@ -13,14 +13,16 @@ local errorMatches = {
     -- {msg = 'Nil resource warning',               find = 'warning: GetResource: Invalid name ""'},
 }
 
-function debug.logAnalyse(log, detail)
+function debug.logAnalyse(log, detail, nameOverwrite)
     if not log then return end
     local warns = {}
     local feedback = love.thread.getChannel'log'
-    if type(log)=='string' then
-        feedback:push{{1, 1, 1}, 'Analysing string\n'}
+    if nameOverwrite then
+        feedback:push{{1, 1, 1}, 'Analysing ', nameOverwrite,':\n'}
+    elseif type(log)=='string' then
+        feedback:push{{1, 1, 1}, 'Analysing string:\n'}
     else
-        feedback:push{{1, 1, 1}, 'Analysing ', log:getFilename(),'\n'}
+        feedback:push{{1, 1, 1}, 'Analysing ', log:getFilename(),':\n'}
     end
     for line in type(log)=='string' and log:gmatch'([^\r\n]+)' or log:lines() do
         for i, data in ipairs(errorMatches) do

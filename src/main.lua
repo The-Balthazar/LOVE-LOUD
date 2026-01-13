@@ -21,6 +21,7 @@ function love.load(arg, argUnparsed, updated)
     if love.filesystem.isFused() then
         assert(love.filesystem.mountFullPath(love.filesystem.getSourceBaseDirectory(), 'SCFA', 'readwrite', true), "Failed to mount game folder with write permissions.")
     end
+    love.thread.newThread'utils/threads/checkLastLog.lua':start()
 end
 
 local windowData = {}
@@ -131,7 +132,7 @@ function love.keypressed(key, ...)
         uiMode:goBack()
     end
     if key=='v' and (love.keyboard.isDown'lctrl' or love.keyboard.isDown'rctrl') then
-        require'utils.debug'.logAnalyse(love.system.getClipboardText(), userConfig.showLogAnalysisDetail)
+        require'utils.debug'.logAnalyse(love.system.getClipboardText(), userConfig.showLogAnalysisDetail, 'pasted string')
     end
 end
 
