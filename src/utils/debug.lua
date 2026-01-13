@@ -1,16 +1,19 @@
 local debug = {}
 
 local errorMatches = {
-    {msg = 'Surround sound warning',             find = 'warning: Unknown DirectSound speaker configuration %d*%. Defaulting to Stereo%.'},
-    {msg = 'Surround sound error',               find = 'warning: SND: XACT3DApply failed%.'},
-    {msg = 'Streaming/recording software error', find = 'warning: SofDec error: 1060102: Internal Error: adxm_goto_mwidle_border'},
-    {msg = 'Alt-tabbing warning',                find = 'info: Minimized true'},
-    {msg = 'OneDrive folder use warning',        find = 'info:.*\\OneDrive\\'},
-    {msg = 'File load error',                   match = 'warning: SCR_LuaDoFileConcat: Loading .-([^\\"]*%.[lb][up]a?)%(%d*%):'},
-    {msg = 'Entity script error',               match = 'warning: Error running .- script in Entity (.-) at '},
-    {msg = 'Unknown unit ID error',             match = 'warning: Unknown unit type: (.+)'},
-    {msg = 'Error in file',                     match = 'warning: Error in file (.-) : '},
-    {msg = 'Error running script',              match = 'warning: Error running lua script: (.+)'},
+    {msg = false,                                find = '^debug: '},
+    {msg = false,                                find = '^ '},
+    {msg = 'Alt-tabbing warning',                find = '^info: Minimized true'},
+    {msg = 'OneDrive folder use warning',        find = '^info:.*\\OneDrive\\'},
+    {msg = false,                                find = '^info: '},
+    {msg = 'Surround sound warning',             find = '^warning: Unknown DirectSound speaker configuration %d*%. Defaulting to Stereo%.'},
+    {msg = 'Surround sound error',               find = '^warning: SND: XACT3DApply failed%.'},
+    {msg = 'Streaming/recording software error', find = '^warning: SofDec error: 1060102: Internal Error: adxm_goto_mwidle_border'},
+    {msg = 'File load error',                   match = '^warning: SCR_LuaDoFileConcat: Loading .-([^\\"]*%.[lb][up]a?)%(%d*%):'},
+    {msg = 'Entity script error',               match = '^warning: Error running .- script in Entity (.-) at '},
+    {msg = 'Unknown unit ID error',             match = '^warning: Unknown unit type: (.+)'},
+    {msg = 'Error in file',                     match = '^warning: Error in file (.-) : '},
+    {msg = 'Error running script',              match = '^warning: Error running lua script: (.+)'},
     -- {msg = 'Out of bounds flatten warning',      find = 'warning: Attempted to flatten terrain outside map boundary! Operation Failed!'},
     -- {msg = 'Nil resource warning',               find = 'warning: GetResource: Invalid name ""'},
 }
@@ -29,6 +32,7 @@ function debug.logAnalyse(log, detail, nameOverwrite)
     for line in type(log)=='string' and log:gmatch'([^\r\n]+)' or log:lines() do
         for i, data in ipairs(errorMatches) do
             if line and (data.find and line:find(data.find) or not detail and data.match and line:find(data.match)) then
+                if not data.msg then break end
                 if not warns[data.msg] then table.insert(warns, data.msg) end
                 warns[data.msg] = (warns[data.msg] or 0)+1
                 break
