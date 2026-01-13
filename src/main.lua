@@ -131,7 +131,7 @@ function love.keypressed(key, ...)
         uiMode:goBack()
     end
     if key=='v' and (love.keyboard.isDown'lctrl' or love.keyboard.isDown'rctrl') then
-        require'utils.debug'.logAnalyse(love.system.getClipboardText())
+        require'utils.debug'.logAnalyse(love.system.getClipboardText(), userConfig.showLogAnalysisDetail)
     end
 end
 
@@ -142,5 +142,5 @@ function love.textinput(...)
 end
 
 function love.filedropped(file)
-	require'utils.debug'.logAnalyse(file)
+	require'utils.debug'.logAnalyse(file, userConfig.showLogAnalysisDetail)
 end
