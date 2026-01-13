@@ -5,7 +5,7 @@ local copyText = 'Copy launch commands'
 local launchRichText = {'Launch commands:    ', {0.7, 0, 0.3}, launchCommand, '    ', {1,1,1,0}, copyText}
 
 local helptext = [[
-LOUD functions by launching the original game with a command instructing it to load a custom init file that has it load LOUD assets instead of the default ones. These files will not be loaded without said init, and as such LOUD can be remain installed without affecting your ability to play vanilla or any other init-level mod like FAF.
+LOUD functions by launching the original game with a command instructing it to load a custom init file that has it load LOUD assets instead of the default ones. These files will not be loaded without said init, and as such LOUD can remain installed without affecting your ability to play vanilla or any other init-level mod like FAF.
 
 You can create a custom shortcut to load LOUD with said launch command, shown above.
 ]]
