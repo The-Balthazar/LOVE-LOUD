@@ -132,6 +132,7 @@ function love.keypressed(key, ...)
         uiMode:goBack()
     end
     if key=='v' and (love.keyboard.isDown'lctrl' or love.keyboard.isDown'rctrl') then
+        love.thread.getChannel'log':push''
         require'utils.debug'.logAnalyse(love.system.getClipboardText(), userConfig.showLogAnalysisDetail, 'pasted string')
     end
 end
@@ -143,5 +144,6 @@ function love.textinput(...)
 end
 
 function love.filedropped(file)
+    love.thread.getChannel'log':push''
 	require'utils.debug'.logAnalyse(file, userConfig.showLogAnalysisDetail)
 end
