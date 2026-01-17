@@ -9,6 +9,7 @@ local errorMatches = {
     {msg = 'Indent on multi-line message',        colour = nil,   find  = '^ '},
     {msg = 'Alt-tabbing warning',                 colour = red,   find  = '^info: Minimized true'},
     {msg = 'OneDrive folder use warning',         colour = red,   find  = '^info:.*\\OneDrive\\'},
+    {msg = 'Particle cap exceeded',               colour = amber, find  = '^info: Particle cap exceeded, discarding excess.'},
     {msg = 'Other log',                           colour = nil,   find  = '^info: '},
     {msg = 'Stack traceback indent',              colour = nil,   find  = '^warning:         [^ ]'},
     {msg = 'Stack traceback',                     colour = nil,   find  = '^warning: stack traceback:'},
