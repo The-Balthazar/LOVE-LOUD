@@ -11,5 +11,8 @@ if logInfo then
     if ok and chunk then
         local logTime = logInfo.modtime and os.date(' from %Y %B %d, %H:%M', logInfo.modtime) or ''
         require'utils.debug'.logAnalyse(chunk, false, 'previous game log'..logTime)
+
+        local realPath = 'file://'..love.filesystem.getRealDirectory(lastLog)..(love.filesystem.isFused() and '/LOUD/' or '/')..'bin/LOUD.log'
+        feedback:push{'weblink', realPath, 'View original log'}
     end
 end

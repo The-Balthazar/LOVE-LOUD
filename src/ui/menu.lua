@@ -125,7 +125,7 @@ return {
                 trimVisibleLog(self)
             elseif msgType=='table' and msg[1]=='weblink' then
                 local link, title = msg[2], msg[3]
-                local shortlink = #link<=26 and link:match'https?://(.*)' or link:sub(1,22):match'https?://(.*)'..'...'
+                local shortlink = #link<=26 and link:match'[fh][it][tl][pe]s?://(.*)' or (link:sub(1,22):match'[fh][it][tl][pe]s?://(.*)' or link:sub(-15))..'...'
                 table.insert(log, require'ui.elements.button'{
                     logObject = '\n\n',
                     text = title or shortlink,
@@ -144,7 +144,7 @@ return {
                     end,
                     onHover = function(self, UI)
                         if self.mouseOver then
-                            self.text = shortlink
+                            self.text = shortlink or title
                         else
                             self.text = title or shortlink
                         end
