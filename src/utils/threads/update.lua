@@ -5,7 +5,9 @@ local threads = {}
 
 feedback:push'Checking for updates'
 
-local fileinfo = require'utils.network'.ftpGet('SCFA_FileInfo.txt')
+local ok, network = pcall(require, 'utils.network')
+if not ok then return feedback:push{{0.7, 0, 0.3}, 'Update failed, can\'t load network module\n'} end
+local fileinfo = network.ftpGet('SCFA_FileInfo.txt')
 if type(fileinfo)~='string' then
     feedback:push{{0.7, 0, 0.3}, 'Update aborted; SCFA_FileInfo.txt not received\n'}
     feedback:push{{1, 1, 1}, 'Checking connection\n'}
