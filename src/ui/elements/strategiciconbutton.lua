@@ -1,3 +1,5 @@
+local feedback = love.thread.getChannel'log'
+
 return function(iconType, oXN, oXP, oYN, oYP)
     local icon = love.graphics.newImage(('graphics/strategicicon/%s_icon_fighter3_antiair_rest.png'):format(iconType))
     icon:setFilter('nearest', 'nearest')
@@ -17,6 +19,7 @@ return function(iconType, oXN, oXP, oYN, oYP)
             userConfig.iconSet = iconType
             saveUserConfig()
             updateLoudDataPath()
+            feedback:push{{0.8, 0.8, 0.8}, 'Strategic icons set to ', iconType, '\n'}
         end,
         update = function(self, UI, delta)
             self.inactive = userConfig.iconSet~=iconType
