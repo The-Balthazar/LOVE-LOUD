@@ -2,6 +2,7 @@ require'utils.maths'
 require'utils.table'
 require'utils.system'
 require'utils.filesystem'
+require'utils.localization'
 
 function love.conf(t)
     t.version = "12.0"
