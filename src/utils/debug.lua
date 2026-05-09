@@ -45,6 +45,8 @@ local errorMatches = {
     {msg = 'FAF class initialisation error',      colour = nil,   find  = '^warning: [%a%d\\_.-~]*%(%d*%): Class initialisation:'},
     {msg = 'Unanalysed script error',             colour = red,   match = '^warning: Error running (.*)'},
     {msg = 'Config screen resolution warning',    colour = nil,   find  = '^warning: Unable to set requested size %d*,%d*.'},
+    {msg = 'Connection log ignored',              colour = nil,   find  = '^warning: Ignoring LOGMSG_Introduction from non-pending connection'},
+    {msg = 'Missing tooltip',                     colour = nil,   match = '^warning: No tooltip in table for key: (.*)'},
     {msg = 'Unknown warning',                     colour = red,   match = '^warning: (.*)'},
     {msg = 'Unevaluated log line',                colour = red,   match = '.*'},
 }
