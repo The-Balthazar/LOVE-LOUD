@@ -16,6 +16,7 @@ local errorMatches = {
     {msg = 'Surround sound warning',              colour = red,   find  = '^warning: Unknown DirectSound speaker configuration %d*%. Defaulting to Stereo%.'},
     {msg = 'Surround sound error',                colour = red,   find  = '^warning: SND: XACT3DApply failed%.'},
     {msg = 'Streaming/recording software error',  colour = red,   find  = '^warning: SofDec error: 1060102: Internal Error: adxm_goto_mwidle_border'},
+    {msg = 'LazyVar error',                       colour = red,   match = '^warning: Evaluating LazyVar failed: error evaluating lazy variable: .-([^\\"]*%.lua)%(%d*%)'},
     {msg = 'File load error',                     colour = amber, match = '^warning: SCR_LuaDoFileConcat: Loading .-([^\\"]*%.[lb][up]a?)%(%d*%):'},
     {msg = 'File import error',                   colour = amber, match = '^warning: .-Error importing .-([^\\/"]*%.[lb][up]a?):?'},
     {msg = 'Entity script error',                 colour = amber, match = '^warning: Error running .- script in Entity (.-) at '},
