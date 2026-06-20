@@ -312,13 +312,26 @@ return {
         end
     end,
     keypressed = function(self, key, ...)
+        local ctrl = (love.keyboard.isDown'lgui' or love.keyboard.isDown'lctrl')
         if key=='escape' then
             if deselectSearch() then
                 return true
             end
-        elseif key=='backspace' and type(searchButton.text)=='table' then
-            searchButton.text[2] = searchButton.text[2]:sub(1,-2)
-            searchIndicatorBlinkTimer = love.timer.getTime()
+        elseif key=='backspace' and type(searchButton.text)=='table' and searchButton.text[2]~='' then
+            if ctrl then
+                local space = searchButton.text[2]:find' +[^ ]*$'
+                if space then
+                    searchButton.text[2] = searchButton.text[2]:sub(1, space-1)
+                else
+                    searchButton.text[2] = ''
+                end
+            else
+                searchButton.text[2] = searchButton.text[2]:sub(1, require'utf8'.offset(searchButton.text[2], -1)-1)
+                searchIndicatorBlinkTimer = love.timer.getTime()
+            end
+            pcall(updateFiltered)
+        elseif key=='v' and ctrl and type(searchButton.text)=='table' then
+            searchButton.text[2] = searchButton.text[2]..(love.system.getClipboardText() or '')
             pcall(updateFiltered)
         end
     end,
