@@ -173,7 +173,7 @@ return {
     end,
     objects = {
         require'ui.elements.button'{
-            text = exeFound and 'Launch game' or 'Game exe not found',
+            text = exeFound and t('launch_game') or t('game_exe_not_found'),
             inactive = not exeFound,
             posXN = 0,
             posYN = 1,
@@ -189,7 +189,7 @@ return {
                 if not initFound then initFound = love.filesystem.getInfo(writePath..'bin/LoudDataPath.lua') end
                 if not initFound then return love.thread.getChannel'log':push{{0.7, 0, 0.3}, 'LoudDataPath.lua not found:', {1,1,1}, ' Have you performed first update/install?', '\n'} end
                 self.inactive = true
-                self.text = 'Launching'
+                self.text = t('launching')
                 launching = true
                 osCall(exeFound, '/log "LOUD\\bin\\LOUD.log" /init "..\\LOUD\\bin\\LoudDataPath.lua"')
                 os.exit()
@@ -202,7 +202,7 @@ return {
         },
 
         require'ui.elements.button'{
-            text = 'Update LOUD',
+            text = t('update_loud'),
             posXN = 0,
             posYN = 1,
             offsetXN = 0.5,
@@ -216,20 +216,20 @@ return {
                 if self.inactive then return end
                 self.inactive = true
                 updating = true
-                self.text = 'Updating'
+                self.text = t('updating')
                 self.icon = throbber
                 love.thread.newThread'utils/threads/update.lua':start()
             end,
             update = function(self, UI, delta)
-                if not updating and self.text=='Updating' then
-                    self.text = 'LOUD Updated'
+                if not updating and self.text==t('updating') then
+                    self.text = t('loud_updated')
                     self.icon = nil
                 end
                 self.iconAngle = love.timer.getTime()*2
             end,
         },
         require'ui.elements.button'{
-            text = 'Update maps',
+            text = t('update_maps'),
             posXN = 0,
             posYN = 1,
             offsetXN = 1.5,
@@ -242,7 +242,7 @@ return {
                 if launching then return end
                 if self.inactive then return end
                 self.inactive = true
-                self.text = 'Updating'
+                self.text = t('updating')
                 self.icon = throbber
                 love.thread.newThread'utils/threads/updateMaps.lua':start()
             end,
@@ -250,10 +250,10 @@ return {
                 if self.inactive then
                     local val = love.thread.getChannel'wastefulSingleUseChannelToMarkMapUpdateComplete':pop()
                     if val=='yes' then
-                        self.text = 'Maps updated'
+                        self.text = t('maps_updated')
                         self.icon = nil
                     elseif val=='no' then
-                        self.text = 'Retry map update'
+                        self.text = t('retry_map_update')
                         self.inactive = nil
                         self.icon = nil
                     end
@@ -277,7 +277,7 @@ return {
         },
 
         require'ui.elements.button'{
-            text = 'Game config',
+            text = t('game_config'),
             posXN = 1,
             posYN = 1,
             offsetXN = -0.5,
@@ -294,7 +294,7 @@ return {
             end,
         },
         require'ui.elements.button'{
-            text = 'Folder links',
+            text = t('folder_links'),
             posXN = 1,
             posYN = 1,
             offsetXN = -0.5,
@@ -311,20 +311,37 @@ return {
             end,
         },
         require'ui.elements.button'{
-            text = 'Web links',
+            text = t('web_links'),
             posXN = 1,
             posYN = 1,
             offsetXN = -0.5,
-            offsetXP = -125,
+            offsetXP = -145,
             offsetYN = -0.5,
             offsetYP = -125,
-            widthBase = 100,
+            widthBase = 80,
             heightBase = 30,
             update = function(self, UI, delta)
                 self.inactive = menuActiveTab~='links'
             end,
             onPress = function(self, UI)
                 menuActiveTab = 'links'
+            end,
+        },
+        require'ui.elements.button'{
+            text = t('language'),
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -0.5,
+            offsetXP = -90,
+            offsetYN = -0.5,
+            offsetYP = -125,
+            widthBase = 70,
+            heightBase = 30,
+            update = function(self, UI, delta)
+                self.inactive = menuActiveTab~='language'
+            end,
+            onPress = function(self, UI)
+                menuActiveTab = 'language'
             end,
         },
         require'ui.elements.button'{
@@ -712,6 +729,117 @@ return {
             heightBase = 30,
             onPress = function(self, UI)
                 setUIMode(require'ui.help.shortcut')
+            end,
+        },
+        
+        -- Language selector buttons
+        require'ui.elements.button'{
+            showIf = function(self, UI, delta) return menuActiveTab=='language' end,
+            text = t('select_language'),
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -0.5,
+            offsetXP = -125,
+            offsetYN = -0.5,
+            offsetYP = -85,
+            widthBase = 200,
+            heightBase = 30,
+            inactive = true,
+        },
+        
+        -- English
+        require'ui.elements.button'{
+            showIf = function(self, UI, delta) return menuActiveTab=='language' end,
+            text = 'English',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -1.5,
+            offsetXP = -55,
+            offsetYN = -0.5,
+            offsetYP = -50,
+            widthBase = 120,
+            heightBase = 30,
+            update = function(self, UI, delta)
+                local localization = require'utils.localization'
+                self.inactive = localization.getCurrentLanguage() == 'en'
+            end,
+            onPress = function(self, UI)
+                local localization = require'utils.localization'
+                localization.setLanguage('en')
+                userConfig.language = 'en'
+                saveUserConfig()
+            end,
+        },
+        
+        -- Spanish
+        require'ui.elements.button'{
+            showIf = function(self, UI, delta) return menuActiveTab=='language' end,
+            text = 'Español',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -0.5,
+            offsetXP = -50,
+            offsetYN = -0.5,
+            offsetYP = -50,
+            widthBase = 120,
+            heightBase = 30,
+            update = function(self, UI, delta)
+                local localization = require'utils.localization'
+                self.inactive = localization.getCurrentLanguage() == 'es'
+            end,
+            onPress = function(self, UI)
+                local localization = require'utils.localization'
+                localization.setLanguage('es')
+                userConfig.language = 'es'
+                saveUserConfig()
+            end,
+        },
+        
+        -- French
+        require'ui.elements.button'{
+            showIf = function(self, UI, delta) return menuActiveTab=='language' end,
+            text = 'Français',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -1.5,
+            offsetXP = -55,
+            offsetYN = -1.5,
+            offsetYP = -55,
+            widthBase = 120,
+            heightBase = 30,
+            update = function(self, UI, delta)
+                local localization = require'utils.localization'
+                self.inactive = localization.getCurrentLanguage() == 'fr'
+            end,
+            onPress = function(self, UI)
+                local localization = require'utils.localization'
+                localization.setLanguage('fr')
+                userConfig.language = 'fr'
+                saveUserConfig()
+            end,
+        },
+        
+        -- German
+        require'ui.elements.button'{
+            showIf = function(self, UI, delta) return menuActiveTab=='language' end,
+            text = 'Deutsch',
+            posXN = 1,
+            posYN = 1,
+            offsetXN = -0.5,
+            offsetXP = -50,
+            offsetYN = -1.5,
+            offsetYP = -55,
+            widthBase = 120,
+            heightBase = 30,
+            update = function(self, UI, delta)
+                local localization = require'utils.localization'
+                self.inactive = localization.getCurrentLanguage() == 'de'
+            end,
+            onPress = function(self, UI)
+                local localization = require'utils.localization'
+                localization.setLanguage('de')
+                userConfig.language = 'de'
+                saveUserConfig()
             end,
         },
     },

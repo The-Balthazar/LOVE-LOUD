@@ -12,6 +12,14 @@ function getUIMode() return uiMode end
 
 function love.load(arg, argUnparsed, updated)
     userConfig = loadSaveFileData'userConfig' or {}
+    
+    -- Initialize localization system
+    local localization = require'utils.localization'
+    localization.init(userConfig.language)
+    
+    -- Create global translation function
+    t = localization.t
+    
     uiMode = require'ui.intro'
     if not updated and loadUpdatedLauncher(arg, argUnparsed) then
         return
