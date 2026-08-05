@@ -1,5 +1,6 @@
 local getChannel = love.thread.getChannel'get'
 local feedback = love.thread.getChannel'log'
+local threadIndex = love.thread.getChannel'index'
 local writePath = love.filesystem.isFused() and 'SCFA/LOUD/' or ''
 local threads = {}
 
@@ -37,6 +38,7 @@ for folder, file, hash, size in (fileinfo):gmatch'([^\r\n]+)\\([^\r\n\\]+),0x([0
             table.insert(threads, love.thread.newThread'utils/threads/getWrite.lua')
             feedback:push('Starting FTP thread #'..#threads)
             threads[#threads]:start()
+            threadIndex:push(#threads)
         end
     end
     if toClean[folder] or toClean[folder:match'^[^/\\]*'] then

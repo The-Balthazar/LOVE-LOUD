@@ -18,7 +18,7 @@ function network.ftpGet(path)
     }
     if not good then
         feedback:push{{0.7, 0, 0.3}, path or 'no path', ': ', err or 'no error', '\n'}
-        return
+        return nil, err
     end
     return table.concat(sink)
 end
@@ -31,7 +31,7 @@ function network.ftpGetWrite(path)
     local folder = path:match'^([^/]*)':gsub('\\', '/')
     path = path:gsub('\\', '/')
     feedback:push{path, 'downloading'}
-    local fileData = network.ftpGet(path)
+    local fileData, err = network.ftpGet(path)
     if fileData then
         love.filesystem.createDirectory(writePath..folder)
         feedback:push{path, 'writing'}
@@ -39,9 +39,13 @@ function network.ftpGetWrite(path)
         local success, message = love.filesystem.write(writePath..path, handler and handler(fileData) or fileData)
         if success then
             feedback:push{path, 'done'}
+            return true
         else
             feedback:push{{0.7, 0, 0.3}, path, ' error: ', message, '\n'}
+            return nil, err
         end
+    elseif err then
+        return nil, err
     end
 end
 
