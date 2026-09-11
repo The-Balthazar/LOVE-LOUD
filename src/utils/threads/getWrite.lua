@@ -1,5 +1,6 @@
 local channel = love.thread.getChannel'get'
 local threadIndex = love.thread.getChannel'index'
+local feedback = love.thread.getChannel'log'
 local network = require'utils.network'
 
 local index = threadIndex:demand()
