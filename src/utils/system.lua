@@ -7,6 +7,18 @@ function osCall(call, options)
     end
 end
 
+-- Windows: starts the game with the 3 GB allocator fix applied in memory (utils/patch3gb.lua).
+-- Falls back to osCall when the game could not be started that way.
+function launchGame(call, options)
+    if love.system.getOS()=='Windows' then
+        local ok, patched, msg, pid = pcall(require'utils.patch3gb'.launch, call, options)
+        if ok and pid then
+            return
+        end
+    end
+    osCall(call, options)
+end
+
 function createShortcut(linkname, link)
     local OS = love.system.getOS()
     if OS=='Windows' then
